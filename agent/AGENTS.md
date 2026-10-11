@@ -181,8 +181,18 @@ A `data.md` must have at least one chapter (the tool rejects it otherwise), so t
   tone, size or look, and to attach the zip with their answer.
 - **Writing (stage 5):** one chapter per delivery, each as `<name>_chapterN.pdf` (that chapter alone) +
   `<name>.zip` (section 9). After each, say in one line what the chapter covers, update the plan, and ask the author
-  to open the PDF and reply "ok" or the changes, attaching the zip. If the author says "write everything", go on without stopping, still validating
-  each chapter.
+  to open the PDF and reply "ok" or the changes, attaching the zip.
+- **Check each step or write it all?** At the end of the sample and of every chapter except the last, ask the
+  author, naming the next step: do they want to receive it (e.g. "chapter 1", "chapter 4") to check before you go
+  on, or should you write the rest without stopping and come back only when the whole book is done? Example:
+  "Do you want to see chapter 2 before I continue, or should I write the rest of the book and come back when it is
+  complete?" Ask it together with the "ok or changes" question, in the same message. After the sample, the next
+  step is chapter 1 in full.
+- **Without stopping.** When the author chooses it (or says "write everything"), add `- write without stopping
+  until the book is done` to the plan's `decisions` and write every remaining chapter in a row, still validating
+  each one, then do stage 6 up to the point where the author must answer (the destination, Task H). Deliver then:
+  `<name>.pdf` + `<name>.zip`, with a one-line summary per chapter. If the author later asks to check again, remove
+  that decision and go back to one chapter per delivery.
 
 ### 0.6 Every reply to the author
 

@@ -62,7 +62,8 @@ The toolbar at the top:
    (this whole folder in one zip) and attach it from the start.
    Starting from just an idea is fine: the AI interviews you in short rounds (each question comes with a suggestion;
    reply "ok" to accept), shows you the plan and the chapter list, delivers a sample page, then writes chapter by
-   chapter. Each time it gives you a PDF, to see the result (`<title>_sample.pdf`, `<title>_chapter3.pdf`,
+   chapter. After the sample and after each chapter it asks whether you want to check the next one (for example
+   "chapter 2") or let it write the rest without stopping and come back when the whole book is done. Each time it gives you a PDF, to see the result (`<title>_sample.pdf`, `<title>_chapter3.pdf`,
    `<title>.pdf`), and `<title>.zip`, to attach to your next request. The plan is saved inside `data.md` (as a hidden comment), so another chat or AI can continue later.
    The interview approach is adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills) (MIT).
 2. To change an existing book, also attach its current `data.md` (and `layout.html` + `style.css` when the change
