@@ -1365,23 +1365,55 @@ def stage_book(data_path, tmp):
     return os.path.join(book, "index.html"), skipped
 
 
-def run_browser(browser, index, params, tmp, extra):
+def browser_timeout():
+    """Seconds one browser run may take: BOOK_BROWSER_TIMEOUT, or 300."""
+    try:
+        return max(10, int(os.environ.get("BOOK_BROWSER_TIMEOUT", "300")))
+    except ValueError:
+        return 300
+
+
+def run_browser(browser, index, params, tmp, extra, no_sandbox=False):
     """Open the staged book in a headless browser; returns (stdout text, stderr text)."""
     import pathlib
     import subprocess
+    import time
     import urllib.parse
     url = pathlib.Path(index).as_uri() + "?" + urllib.parse.urlencode(params)
     profile = os.path.join(tmp, f"profile-{len(os.listdir(tmp))}")
+    # the extra switches keep Chrome from waiting on things a sandbox lacks: shared memory, network services,
+    # crash reporting, component updates
     args = [browser, "--headless", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
             "--disable-extensions", "--disable-sync", "--mute-audio", f"--user-data-dir={profile}",
+            "--disable-dev-shm-usage", "--disable-background-networking", "--disable-component-update",
+            "--disable-breakpad", "--no-pings", "--disable-features=Translate,MediaRouter,OptimizationHints",
             "--host-resolver-rules=MAP * ~NOTFOUND", f"--virtual-time-budget={BROWSER_WAIT_MS}"]
-    if hasattr(os, "geteuid") and os.geteuid() == 0:
+    if no_sandbox or (hasattr(os, "geteuid") and os.geteuid() == 0):
         args.append("--no-sandbox")   # Chrome does not start as root (containers) without it
+    limit = browser_timeout()
+    start = time.time()
+    # a session of its own, so a timeout ends Chrome's helper processes too, not only the main one
+    kw = {"start_new_session": True} if os.name == "posix" else {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+    proc = subprocess.Popen(args + extra + [url], stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kw)
     try:
-        r = subprocess.run(args + extra + [url], capture_output=True, timeout=600)
+        out, err = proc.communicate(timeout=limit)
     except subprocess.TimeoutExpired:
-        return "", "the browser did not finish in 10 minutes"
-    return r.stdout.decode("utf-8", "replace"), r.stderr.decode("utf-8", "replace")
+        if os.name == "posix":
+            import signal
+            try:
+                os.killpg(proc.pid, signal.SIGKILL)
+            except OSError:
+                proc.kill()
+        else:
+            subprocess.run(["taskkill", "/F", "/T", "/PID", str(proc.pid)], capture_output=True)
+        proc.communicate()
+        return "", (f"the browser did not finish in {limit} s (BOOK_BROWSER_TIMEOUT sets the limit). "
+                    "In a chat sandbox that cuts long commands, run the export in the background (AGENTS.md section 6).")
+    out, err = out.decode("utf-8", "replace"), err.decode("utf-8", "replace")
+    if not no_sandbox and "--no-sandbox" not in args and "No usable sandbox" in err:
+        return run_browser(browser, index, params, tmp, extra, no_sandbox=True)   # containers without user namespaces
+    print(f"  browser run: {time.time() - start:.0f} s", flush=True)
+    return out, err
 
 
 def last_line(err):
@@ -1392,6 +1424,7 @@ def last_line(err):
 def export_report(browser, index, params, tmp):
     """Lay the book out and read the viewer's report; None (after saying why) when it fails."""
     import json
+    print(f"Laying the book out in {os.path.basename(browser)}…", flush=True)
     out, err = run_browser(browser, index, params, tmp, ["--dump-dom"])
     m = re.search(r'<script type="application/json" id="book-export">([\s\S]*?)</script>', out)
     if not m:
@@ -1618,6 +1651,7 @@ def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=Non
             parts = [(out, "interior", rep["pages"] - 1), (os.path.abspath(cover_pdf), "cover", 1)]
         for k, (dst, part, expected) in enumerate(parts):
             rgb = os.path.join(tmp, f"part-{k}.pdf")
+            print(f"Printing {os.path.basename(dst)}…", flush=True)
             _, err = run_browser(browser, index, dict(params, **({"part": part} if part else {})), tmp,
                                  ["--no-pdf-header-footer", f"--print-to-pdf={rgb}"])
             if not os.path.isfile(rgb):
