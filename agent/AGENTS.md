@@ -44,8 +44,8 @@ built, not a passing failure, and the repository being public does not change it
 |---|---|
 | Test once | One failed clone or download is enough. Do not retry, and do not ask the author to connect accounts or change settings. |
 | Read by browsing | Your browser still works: read this file, the reference book, and check facts and image licenses on the web from there. |
-| Ask for the kit, once | In one short message, ask the author to download `downloads/kit.zip` from this site and attach it. It holds the repository as it is (`README.md`, `agent/AGENTS.md`, `engine/`, the reference book), so every command in this file works after you unzip it. The repository's own zip (`archive/refs/heads/main.zip` on GitHub) works too. If the author said to stop when the files cannot be obtained, this message is that stop. |
-| Ask for known photos in the same message | The sandbox cannot download images either. Photos the author already named (links in their request) go in that same message: one line per photo, the link to download and the file name to attach it as. Photos you choose later (option B, section 5) go in one more list when the text is done, never one at a time. Never deliver a photo you did not actually get. |
+| Ask for the kit, once | In one short message, ask the author to download `downloads/kit.zip` from this site and attach it. It holds the repository as it is (`README.md`, `agent/AGENTS.md`, `engine/`, the reference book), so every command in this file works after you unzip it. The repository's own zip (`archive/refs/heads/main.zip` on GitHub) works too. If the author said to stop when the files cannot be obtained, this message is that stop; also offer to go on without the kit (the "No Python" path in section 6). Otherwise keep working while you wait (rule 16). |
+| Ask for known photos in the same message | The sandbox cannot download images either. Photos the author already named (links in their request) go in that same message: one line per photo, the link to download and the file name to attach it as. Photos you choose later (option B, section 5) go in the missing-image list when the text is done ("When you cannot get an image", section 5), never one at a time. Never deliver a photo you did not actually get. |
 | Treat the attached zip as the received kit | Unzip it (e.g. into `/mnt/data/alencar/`) and work there exactly as a coding agent would (section 6). |
 | Say what you could not run | `pdf` and `epub` need a browser inside the sandbox (Task H). If there is none, say so in the final reply. |
 
@@ -217,6 +217,7 @@ A `data.md` must have at least one chapter (the tool rejects it otherwise), so t
 | 13 | Every book matches the reference book ("Reference book" at the top): same files, same structure, same conventions. Deviate only where the author asked. |
 | 14 | Never create or fetch images on your own initiative: no generating, no downloading, no swapping one image for another. For each image the book needs, write its prompt and let the author choose where it comes from (section 5). Act only on that choice. |
 | 15 | Every book has a cover page (section 3.8). Leave it out (`cover: none`) only when the author explicitly says they want no cover — for example, they are writing one chapter to put into another book. Never drop the cover on your own because the book is short, the image is missing or the request did not mention it. |
+| 16 | A step you cannot do does not end the job. If you cannot download, run the tool, export or fetch an image, do everything else you can (the "No Python" path in section 6, the missing-image list in section 5) and end with what is still pending and how the author can finish it. Stop before doing the rest only when the author told you to stop in that case; then ask for what you need in one message and offer the path that works without it. |
 
 ---
 
@@ -594,6 +595,19 @@ When images are existing photos (options A and B):
 | Prompt | `image-prompt` / `logo-prompt` describe what the photo shows, so the author can replace it later. |
 | Credit | List every photo in `images/CREDITS.md` (file, work, author, license, source page, what you changed). Licenses with "BY" also need the credit printed in the book: end the image's `caption` with it (e.g. "Photo: Chris Rand, CC BY-SA 3.0"), and credit photos without a caption (openers, logos) in a final "Image credits" box or page. |
 | No images | When the author wants no image somewhere, remove the property instead of leaving a missing image. |
+
+**When you cannot get an image** (your sandbox cannot download, the link is broken, the license does not allow
+reuse), the book does not stop. Finish everything else, keep the image's name and prompt in `data.md`, and end your
+reply with one list of the images still missing. For each one, give every way to fill it you can offer:
+
+| way | what you write |
+|---|---|
+| The author downloads it | The photo you chose, with its page link (to check the license) and the direct download link, plus the exact file name to save or attach it as. Once attached, you crop, convert and credit it as usual. |
+| The author generates it elsewhere | The `image-prompt` / `logo-prompt` and the size from the table below, ready to paste into any image AI. |
+| You generate it | Only if you can generate images: offer to do it now (option C). |
+| Leave it out | Removing the property is fine; the page keeps its layout without it. |
+
+Say how many images are missing in one line at the top of that list, so the author sees it even when skimming.
 
 **Names:** lowercase, no accents, no spaces, ending in `.png`, `.jpg` or `.webp` (PNG for generated images; JPG is fine for photos). The name in `data.md` must match the file exactly. Only real PNG/JPEG/WebP files are shown; anything else (SVG, GIF, HTML) is ignored by the viewer.
 
