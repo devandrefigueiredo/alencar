@@ -117,6 +117,7 @@ python engine/tools/book_tools.py pdf  books/<book>/data.md book-print.pdf --ble
 python engine/tools/book_tools.py pdf  books/<book>/data.md book-print.pdf --cover-pdf book-cover.pdf  (the cover in its own file)
 python engine/tools/book_tools.py epub books/<book>/data.md book.epub                        (Apple Books, Kobo, Google Play…)
 python engine/tools/book_tools.py package books/<book>/data.md book.zip book-print.pdf book.epub  (everything in one zip)
+python engine/tools/book_tools.py unpack  book.zip books/<book>                               (a book zip back into a folder)
 ```
 
 `--cmyk` makes a PDF/X-4 in CMYK and needs [Ghostscript](https://ghostscript.com/releases/gsdnld.html); add

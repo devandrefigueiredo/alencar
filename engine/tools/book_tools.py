@@ -30,6 +30,8 @@ Usage:
                                      (fixed-layout EPUB 3 for e-book stores)
   python book_tools.py package       data.md out.zip [exported.pdf ...]
                                      (the book's files + the exported files, in one zip)
+  python book_tools.py unpack        book.zip folder
+                                     (a book zip the author attached -> folder, to change the book)
 
 pdf and epub lay the book out with the viewer in a headless Chrome or Edge (BOOK_BROWSER
 overrides which); pdf --cmyk also needs Ghostscript (BOOK_GS overrides which).
@@ -1788,6 +1790,55 @@ def cmd_package(path, out, *exports):
     return 0
 
 
+def cmd_unpack(zip_path, folder):
+    """The book's current state from a zip the author attached (usually the one made by package): data.md,
+    layout.html, style.css, images/ and fonts/ into folder. export/ (old PDF/EPUB) is listed, not extracted."""
+    import zipfile
+    try:
+        z = zipfile.ZipFile(zip_path)
+    except (OSError, zipfile.BadZipFile) as e:
+        print(f"Not a readable zip: {zip_path} ({e})")
+        return 1
+    with z:
+        files = [i for i in z.infolist() if not i.is_dir() and "__MACOSX/" not in i.filename]
+        # a zip of the book folder has one top folder around everything: strip it
+        tops = {i.filename.replace("\\", "/").split("/")[0] for i in files}
+        strip = len(tops) == 1 and all("/" in i.filename.replace("\\", "/") for i in files)
+        picked, exports = [], []
+        for i in files:
+            name = i.filename.replace("\\", "/")
+            if strip:
+                name = name.split("/", 1)[1]
+            parts = name.split("/")
+            if any(p in ("", ".", "..") for p in parts) or ":" in name:
+                continue
+            if parts[0] == "export" and len(parts) == 2:
+                exports.append(parts[1])
+            elif (len(parts) == 1 and (parts[0] in ("layout.html", "style.css") or parts[0].endswith(".md"))) \
+                    or (len(parts) == 2 and parts[0] in ("images", "fonts")):
+                picked.append((i, name))
+        mds = [n for _, n in picked if "/" not in n and n.endswith(".md")]
+        if "data.md" not in mds:
+            if len(mds) != 1:
+                print("No data.md in the zip" + (f" (and more than one .md: {', '.join(mds)})" if mds else "") + ".")
+                return 1
+            # a re-downloaded file often becomes "data (3).md"
+            picked = [(i, "data.md" if n == mds[0] else n) for i, n in picked]
+        picked = [(i, n) for i, n in picked if "/" in n or not n.endswith(".md") or n == "data.md"]
+        if os.path.isfile(os.path.join(folder, "data.md")):
+            print(f"{folder} already has a data.md: unpack into a new, empty folder")
+            return 1
+        for i, n in picked:
+            dst = os.path.join(folder, *n.split("/"))
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            with z.open(i) as src, open(dst, "wb") as f:
+                shutil.copyfileobj(src, f)
+    print(f"Book: {os.path.join(folder, 'data.md')}\n  " + "\n  ".join(n for _, n in picked))
+    if exports:
+        print("Exported before (not extracted, out of date after any change): " + ", ".join(exports))
+    return 0
+
+
 VALUE_OPTS = ("out", "language", "format", "theme", "icc", "condition", "pdfx", "cover-pdf")
 FLAG_OPTS = {"bleed": "bleed", "cmyk": "cmyk", "force": "force", "open": "show"}   # --flag: keyword
 
@@ -1821,7 +1872,7 @@ def main(argv):
         "images": (cmd_images, 1, ()), "pdf-to-images": (cmd_pdf_to_images, 2, ()),
         "migrate": (cmd_migrate, 1, ("out", "language")), "migrate-css": (cmd_migrate_css, 1, ("out",)),
         "pdf": (cmd_pdf, 2, export + ("bleed", "cmyk", "icc", "condition", "pdfx", "cover_pdf")),
-        "epub": (cmd_epub, 2, export), "package": (cmd_package, None, ()),
+        "epub": (cmd_epub, 2, export), "package": (cmd_package, None, ()), "unpack": (cmd_unpack, 2, ()),
     }
     if c not in cmds:
         print(__doc__)
