@@ -1,7 +1,6 @@
 name: Export in a chat-like sandbox
 
-# Runs the PDF export the way a chat agent's sandbox does: Linux container, root user, Debian's Chromium,
-# the default 64 MB /dev/shm, two CPUs.
+# Runs the PDF export the way a chat agent's sandbox does: gVisor (runsc), no network, root and non-root users.
 on:
   workflow_dispatch:
   push:
@@ -10,18 +9,24 @@ on:
 jobs:
   export:
     runs-on: ubuntu-latest
-    container:
-      image: python:3.11-bookworm
-      options: --cpus 2 --shm-size 64m
     steps:
       - uses: actions/checkout@v4
-      - name: Install Chromium
-        run: apt-get update -qq && apt-get install -y -qq chromium fonts-dejavu-core > /dev/null && chromium --version
-      - name: Export the reference book
-        shell: bash
+      - name: Install gVisor
         run: |
-          set -x
-          python engine/tools/book_tools.py name books/the-art-of-lorem-ipsum-en/data.md
-          time timeout 900 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md out/ref.pdf || true
-          time timeout 900 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md out/ch1.pdf --chapter 1 || true
-          ls -la out || true
+          curl -fsSL https://gvisor.dev/archive.key | sudo gpg --dearmor -o /usr/share/keyrings/gvisor-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" | sudo tee /etc/apt/sources.list.d/gvisor.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq runsc
+          sudo runsc install && sudo systemctl reload docker
+      - name: Build an image with Chromium
+        run: |
+          printf 'FROM python:3.11-bookworm\nRUN apt-get update -qq && apt-get install -y -qq chromium fonts-dejavu-core >/dev/null && useradd -m sandbox\n' > Dockerfile.sandbox
+          docker build -q -t sandbox -f Dockerfile.sandbox .
+      - name: Export under gVisor, root
+        run: |
+          docker run --rm --runtime=runsc --network none -v "$PWD:/w" -w /w sandbox bash -c '
+            chromium --version
+            time timeout 300 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/ref.pdf' || true
+      - name: Export under gVisor, non-root
+        run: |
+          docker run --rm --runtime=runsc --network none -u sandbox -v "$PWD:/w" -w /w sandbox bash -c '
+            time timeout 300 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/ref.pdf' || true
