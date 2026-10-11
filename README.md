@@ -113,10 +113,10 @@ going. You can also run the commands yourself (Google Chrome or Microsoft Edge m
 
 ```
 python engine/tools/book_tools.py pdf  books/<book>/data.md book.pdf                         (screen, home printer)
-python engine/tools/book_tools.py pdf  books/<book>/data.md print.pdf --bleed --cmyk          (print shop, print-on-demand)
-python engine/tools/book_tools.py pdf  books/<book>/data.md print.pdf --cover-pdf cover.pdf   (the cover in its own file)
+python engine/tools/book_tools.py pdf  books/<book>/data.md book-print.pdf --bleed --cmyk     (print shop, print-on-demand)
+python engine/tools/book_tools.py pdf  books/<book>/data.md book-print.pdf --cover-pdf book-cover.pdf  (the cover in its own file)
 python engine/tools/book_tools.py epub books/<book>/data.md book.epub                        (Apple Books, Kobo, Google Play…)
-python engine/tools/book_tools.py package books/<book>/data.md book.zip print.pdf book.epub  (everything in one zip)
+python engine/tools/book_tools.py package books/<book>/data.md book.zip book-print.pdf book.epub  (everything in one zip)
 ```
 
 `--cmyk` makes a PDF/X-4 in CMYK and needs [Ghostscript](https://ghostscript.com/releases/gsdnld.html); add

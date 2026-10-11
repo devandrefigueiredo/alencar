@@ -1489,6 +1489,40 @@ def to_cmyk(gs, src, dst, rep, tmp, icc, condition, pdfx):
     return True
 
 
+def add_trim_boxes(src, dst, bleed_mm):
+    """RGB print file: TrimBox/BleedBox on every page, so the trim is in the file even without Ghostscript.
+    Appended as an incremental update (the browser's PDF has a plain xref table). True when it worked."""
+    with open(src, "rb") as f:
+        data = f.read()
+    start = re.findall(rb"startxref\s+(\d+)\s+%%EOF", data)
+    trailer = re.findall(rb"trailer\s*<<(.*?)>>\s*startxref", data, re.S)
+    if not start or not trailer or b"/Type /XRef" in data or b"/ObjStm" in data:
+        return False
+    size = re.search(rb"/Size\s+(\d+)", trailer[-1])
+    keep = b"".join(re.findall(rb"/(?:Root|Info)\s+\d+\s+\d+\s+R", trailer[-1]))
+    b = bleed_mm * 72 / 25.4
+    out, offsets = bytearray(data if data.endswith(b"\n") else data + b"\n"), []
+    for m in re.finditer(rb"(\d+) 0 obj\s*(<</Type /Page\b.*?)>>\s*endobj", data, re.S):
+        box = re.search(rb"/MediaBox \[\s*([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+)\s*\]", m.group(2))
+        if not box or b"/TrimBox" in m.group(2):
+            continue
+        x0, y0, x1, y1 = (float(v) for v in box.groups())
+        trim = f"/TrimBox [{x0 + b:.3f} {y0 + b:.3f} {x1 - b:.3f} {y1 - b:.3f}] /BleedBox [{x0:g} {y0:g} {x1:g} {y1:g}]"
+        offsets.append((int(m.group(1)), len(out)))
+        out += m.group(1) + b" 0 obj\n" + m.group(2) + b"\n" + trim.encode() + b">>\nendobj\n"
+    if not size or not offsets:
+        return False
+    xref = len(out)
+    out += b"xref\n0 1\n0000000000 65535 f \n"
+    for num, off in sorted(offsets):
+        out += f"{num} 1\n{off:010d} 00000 n \n".encode()
+    out += b"trailer\n<</Size " + size.group(1) + b" " + keep + b" /Prev " + start[-1] + b">>\n"
+    out += f"startxref\n{xref}\n%%EOF\n".encode()
+    with open(dst, "wb") as f:
+        f.write(out)
+    return True
+
+
 def pdf_page_count(path):
     with open(path, "rb") as f:
         return len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", f.read()))
@@ -1556,16 +1590,24 @@ def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=Non
                 if not to_cmyk(gs, rgb, dst + ".part", rep, tmp, icc, condition, pdfx):
                     return 1
                 os.replace(dst + ".part", dst)
+            elif rep["bleed"]:
+                if not add_trim_boxes(rgb, dst + ".part", rep["bleed"]):
+                    print(f"  WARNING [PDF] could not set TrimBox/BleedBox in {os.path.basename(dst)}: "
+                          "the print service must be told the trim size")
+                    shutil.copyfile(rgb, dst + ".part")
+                os.replace(dst + ".part", dst)
             else:
                 shutil.copyfile(rgb, dst)
     size = rep["format"]["name"] + (f' + {rep["bleed"]} mm bleed on each side' if rep["bleed"] else "")
-    color = f"CMYK {PDFX_VERSIONS[pdfx]}, profile {os.path.basename(icc)}" if cmyk else "RGB (screen)"
+    color = f"CMYK {PDFX_VERSIONS[pdfx]}, profile {os.path.basename(icc)}" if cmyk else ("RGB" if rep["bleed"] else "RGB (screen)")
     print(f"PDF: {out}\n  {parts[0][2]} pages, {size}, {color}")
+    if rep["bleed"] and not cmyk:
+        print("  RGB print file: fine for Amazon KDP; a print shop or IngramSpark asks for --cmyk (CMYK PDF/X).")
     if cover_pdf:
         print(f"Cover PDF: {parts[1][0]}\n  the front cover page alone, same size and colour")
     elif rep["cover"] is not None:
         print("  The cover is the book's page " + str(rep["cover"] + 1) + ". Stores that take the cover separately "
-              "(KDP, IngramSpark…) need --cover-pdf cover.pdf.")
+              "(KDP, IngramSpark…) need --cover-pdf book-cover.pdf.")
     if show:
         show_file(out)
         if cover_pdf:
