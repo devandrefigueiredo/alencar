@@ -34,6 +34,21 @@ Paths are relative to the address you read this file from (for example `https://
 **Before your first delivery, read `data.md`, `layout.html` and `style.css` of the reference in full.** If you
 cannot open links, ask the author to download the zip from the site and attach it to the chat.
 
+### When your sandbox has no internet
+
+Many chat agents (ChatGPT, for one) can browse the web but run code in a sandbox that is offline: `git clone`,
+`curl`, `pip` and `requests` fail with "Could not resolve host" or a similar DNS error. That is how the sandbox is
+built, not a passing failure, and the repository being public does not change it.
+
+| Do | Detail |
+|---|---|
+| Test once | One failed clone or download is enough. Do not retry, and do not ask the author to connect accounts or change settings. |
+| Read by browsing | Your browser still works: read this file, the reference book, and check facts and image licenses on the web from there. |
+| Ask for the kit, once | In one short message, ask the author to download `downloads/kit.zip` from this site and attach it. It holds the repository as it is (`README.md`, `agent/AGENTS.md`, `engine/`, the reference book), so every command in this file works after you unzip it. The repository's own zip (`archive/refs/heads/main.zip` on GitHub) works too. If the author said to stop when the files cannot be obtained, this message is that stop. |
+| Ask for known photos in the same message | The sandbox cannot download images either. Photos the author already named (links in their request) go in that same message: one line per photo, the link to download and the file name to attach it as. Photos you choose later (option B, section 5) go in one more list when the text is done, never one at a time. Never deliver a photo you did not actually get. |
+| Treat the attached zip as the received kit | Unzip it (e.g. into `/mnt/data/alencar/`) and work there exactly as a coding agent would (section 6). |
+| Say what you could not run | `pdf` and `epub` need a browser inside the sandbox (Task H). If there is none, say so in the final reply. |
+
 ### Match the reference
 
 | Aspect | Rule |
@@ -644,7 +659,7 @@ the repository (`data.md`, `layout.html`, `style.css`, `images/`).
 
 | agent | how |
 |---|---|
-| Has a Python sandbox (e.g. ChatGPT data analysis) | Ask the author to upload `book_tools.py` with `data.md`. Uploaded files are usually in `/mnt/data/`; check with `import os; print(os.listdir("/mnt/data"))`. Run via `subprocess.run(["python", "/mnt/data/book_tools.py", "validate", "/mnt/data/data.md"], capture_output=True, text=True)`. If the uploaded name differs (e.g. `data (3).md`), use it in commands but deliver as `data.md`. |
+| Has a Python sandbox (e.g. ChatGPT data analysis) | If the sandbox cannot download (see "When your sandbox has no internet"), ask for `downloads/kit.zip` once and use it as the repository. Otherwise ask the author to upload `book_tools.py` with `data.md`. Uploaded files are usually in `/mnt/data/`; check with `import os; print(os.listdir("/mnt/data"))`. Run via `subprocess.run(["python", "/mnt/data/book_tools.py", "validate", "/mnt/data/data.md"], capture_output=True, text=True)`. If the uploaded name differs (e.g. `data (3).md`), use it in commands but deliver as `data.md`. |
 | Has local file access (coding agents) | Edit `books/<book>/data.md`, `layout.html` and `style.css` directly. A new book starts as a copy of `engine/templates/new-book/`. Run `python engine/tools/book_tools.py validate books/<book>/data.md` from the repo root. |
 | No Python | Follow the format rules exactly and run the checklist (section 10). The viewer re-validates on import and lists problems. |
 

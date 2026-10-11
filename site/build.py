@@ -264,6 +264,16 @@ def build():
             if f.is_file() and f.name != "index.html":
                 z.write(f, "new-book/" + f.relative_to(tpl).as_posix())
 
+    # the whole kit with the repository's layout, for chat agents whose sandbox cannot reach the internet:
+    # the author attaches this one zip and every command in AGENTS.md works unchanged inside it
+    kit = [ROOT / "README.md", ROOT / "agent" / "AGENTS.md"]
+    for d in [ROOT / "engine"] + [ROOT / "books" / n for n in SAMPLES]:
+        kit += [f for f in sorted(d.rglob("*")) if f.is_file() and "__pycache__" not in f.parts
+                and f.suffix != ".bak"]
+    with zipfile.ZipFile(OUT / "downloads" / "kit.zip", "w", zipfile.ZIP_DEFLATED) as z:
+        for f in kit:
+            z.write(f, "alencar/" + f.relative_to(ROOT).as_posix())
+
     files = [p for p in OUT.rglob("*") if p.is_file()]
     print(f"built {OUT} - {len(files)} files, {sum(p.stat().st_size for p in files) // 1024} KB")
 
