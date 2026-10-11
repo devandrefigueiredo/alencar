@@ -143,14 +143,14 @@ AGENTS_PAGE = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="{csp}">
 <meta name="referrer" content="no-referrer">
-<title>iareader — instructions for AI agents</title>
-<meta name="description" content="Instructions for AI agents that write books for iareader: format, rules and a reference book to follow.">
+<title>alencar — instructions for AI agents</title>
+<meta name="description" content="Instructions for AI agents that write books for alencar: format, rules and a reference book to follow.">
 <link rel="alternate" type="text/markdown" href="agents.md" title="These instructions as plain text">
 <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="./">iareader</a>
+  <a class="brand" href="./">alencar</a>
   <nav>
     <a href="agents.md">agents.md</a>
     <a href="samples/the-art-of-lorem-ipsum-en/README.md">Reference book</a>

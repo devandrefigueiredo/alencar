@@ -1,4 +1,4 @@
-# iareader — book workspace
+# alencar — book workspace
 
 Your book lives in a plain text file (`data.md`). An AI assistant (ChatGPT, Claude, Gemini or any other) writes
 that file, and the viewer lays out the pages automatically: no misaligned boxes, no waiting for the AI to draw a PDF.

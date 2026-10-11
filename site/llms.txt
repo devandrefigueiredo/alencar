@@ -1,4 +1,4 @@
-# iareader
+# alencar
 
 > A static site that lays out, previews and prints books written by AI agents. The agent writes data.md (content), layout.html and style.css (the book's own layout and look) and images; the user opens them in the site's viewer. Nothing is uploaded.
 
