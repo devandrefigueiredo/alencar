@@ -11,6 +11,7 @@ first-page: 1
 format: a4
 theme: dark
 language: en
+cover: 0.1
 ---
 
 <!-- BOOK PLAN (kept by the AI; the viewer does not show it)
@@ -28,10 +29,17 @@ outline:
 2: Dolor Sit Amet in Practice
   2.1 Boxes and Columns | 2.2 Empty Images | 2.3 Colors and Tones
 decisions:
+- page 0.1 is the cover (layout: cover); chapter pages start at 1
 - pages x.1 and x.3 use the default page template (section 4 of agents.md); pages x.2 show a second arrangement
 - every box row adds up to 12 columns
 next: none (finished)
 -->
+
+## 0.1: The Art of Lorem Ipsum
+layout: cover
+subtitle: A sample book with every kind of page and box
+image: images/cover.jpg
+image-prompt: Portrait photo of old books standing on a wooden shelf, warm low light, dark lower third left calm for the title. No text, letters or logos.
 
 # 1: Foundations of Lorem Ipsum
 subtitle: The first elements of placeholder text.

@@ -9,12 +9,13 @@ layout(function(){/*
 
   Default templates:  page (content pages), opener (chapter openers),
                       box (text and cards boxes), image-box (type: image).
+  cover:              the cover page ("layout: cover" on the page before chapter 1).
   Any other id is a template you can pick in data.md with "layout: <id>"
   on a chapter (opener), a page or a box.
 
   {{name}}             a value: book.title, book.author, book.footer,
                        chapter.num / title / subtitle / label,
-                       page.num / title / subtitle / lede / number / side,
+                       page.num / title / subtitle / lede / image / number / side,
                        box.title / icon / color / type / caption / class,
                        label.chapter, label.inChapter
   data-if="name"       keep this element only if the value is not empty
@@ -23,7 +24,7 @@ layout(function(){/*
                        chapter.pages ({{item.num}}, {{item.title}}, {{item.page}})
                        chapter.tags ({{item.text}})
   data-slot="name"     the engine fills this element:
-                       page: boxes, logo · opener: image, intro · box: icon, body, image
+                       page: boxes, logo, image · opener: image, intro · box: icon, body, image
   data-image="images/ornament.png"   a fixed image of the book
   data-fit="--v MIN MAX [shrink%]"   the engine picks the biggest --v that
                        makes the content fit in this element (pt, or u = 1%
@@ -61,6 +62,15 @@ layout(function(){/*
     <div class="cv-tags" data-if="chapter.tags"><span data-each="chapter.tags">{{item.text}}</span></div>
     <div class="cv-author" data-if="book.author">{{book.author}}</div>
   </div>
+</template>
+
+<template id="cover">
+  <div class="cvr-img"><div data-if="page.image" data-slot="image"></div></div>
+  <div class="cvr-tx" data-fit="--ks 4u 10u 4%">
+    <h1>{{page.title}}</h1>
+    <p data-if="page.subtitle">{{page.subtitle}}</p>
+  </div>
+  <div class="cvr-author" data-if="book.author">{{book.author}}</div>
 </template>
 
 <template id="box">

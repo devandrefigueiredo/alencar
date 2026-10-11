@@ -10,7 +10,14 @@ first-page: 1
 format: original
 theme: dark
 language: en
+cover: 0.1
 ---
+
+## 0.1: Book Title
+layout: cover
+subtitle: One line that tells the reader what the book gives them.
+image: images/cover.png
+image-prompt: Portrait image in the book's colors and style, calm lower third for the title. No text, letters or logos.
 
 # 1: Chapter Title
 subtitle: One sentence that sums up the chapter.

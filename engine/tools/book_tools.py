@@ -22,8 +22,10 @@ Usage:
   python book_tools.py migrate-css   estilo.css [--out style.css]
                                      (old CSS variable / theme names -> new ones)
   python book_tools.py pdf           data.md out.pdf [--format SIZE] [--theme NAME] [--bleed]
-                                     [--cmyk [--icc profile.icc] [--condition NAME] [--pdfx 4|3]] [--force] [--open]
-                                     (RGB PDF for screens; --cmyk: PDF/X for print shops)
+                                     [--cmyk [--icc profile.icc] [--condition NAME] [--pdfx 4|3]]
+                                     [--cover-pdf cover.pdf] [--force] [--open]
+                                     (RGB PDF for screens; --cmyk: PDF/X for print shops;
+                                     --cover-pdf: the cover page in its own file, out of the book's PDF)
   python book_tools.py epub          data.md out.epub [--format SIZE] [--theme NAME] [--force] [--open]
                                      (fixed-layout EPUB 3 for e-book stores)
   python book_tools.py package       data.md out.zip [exported.pdf ...]
@@ -53,9 +55,9 @@ OLD_WRAP_MARK = "livro(function(){/*"      # wrapper of the old Portuguese forma
 
 # ---------------------------------------------------------------- new format
 KEYS = {
-    "book": ["title", "author", "chapters", "footer", "first-page", "format", "theme", "language"],
+    "book": ["title", "author", "chapters", "footer", "first-page", "format", "theme", "language", "cover"],
     "chapter": ["subtitle", "tags", "image", "image-prompt", "opener", "layout", "class"],
-    "page": ["subtitle", "lede", "logo", "logo-prompt", "layout", "class"],
+    "page": ["subtitle", "lede", "logo", "logo-prompt", "image", "image-prompt", "layout", "class"],
     "box": ["icon", "color", "width", "height", "type", "columns", "image", "image-prompt",
             "caption", "title", "layout", "class", "area"],
 }
@@ -82,7 +84,7 @@ def custom_size_ok(v):
     return 50 <= w <= 600 and 50 <= h <= 600
 THEMES = ["dark", "light"]
 LANGUAGES = ["en", "pt", "es", "fr", "de"]
-IMAGE_SIZE = {"logo": "1024x1024", "opener": "1536x1024", "image": "1536x1024"}
+IMAGE_SIZE = {"logo": "1024x1024", "opener": "1536x1024", "image": "1536x1024", "page": "1024x1536"}
 # Words per page. The reference book (A4) holds about 300 words a page with body text near 10 pt.
 # The viewer shrinks text to fit, so a fuller page means smaller print, and a smaller page
 # holds fewer words at the same size: the budget scales with the square root of the page area.
@@ -366,11 +368,12 @@ def validate(text, show=True, extra=None):
 
     level, current, in_props, in_comment = None, None, False, False
     pages, chapters = {}, 0
-    st = {"page": None, "words": 0, "boxes": 0, "box": None}
+    st = {"page": None, "words": 0, "boxes": 0, "box": None, "props": {}}
+    first_page = False
 
     def close_page():
         if st["page"]:
-            if st["boxes"] == 0:
+            if st["boxes"] == 0 and not st["props"].get("layout"):
                 E(st["page"][1], f'page "{st["page"][0]}" has no box (###)')
             if st["words"] > max_words:
                 W(st["page"][1], f'page "{st["page"][0]}" has {st["words"]} words; at {fmt_name} a page holds about '
@@ -407,8 +410,6 @@ def validate(text, show=True, extra=None):
             elif lv == 2:
                 close_box(); st["box"] = None
                 close_page()
-                if chapters == 0:
-                    E(n, "page (##) before any chapter (#)")
                 mm = re.match(r"^(\d+(?:[.\-]\d+)*)\s*:\s+\S", heading)
                 if not mm:
                     W(n, f'page heading out of pattern: "## {heading}". Use "## 12.1: Title"')
@@ -418,8 +419,10 @@ def validate(text, show=True, extra=None):
                 if num in pages:
                     E(n, f'page "{num}" already exists at line {pages[num]}')
                 pages[num] = n
+                first_page = True
                 st["page"], st["words"], st["boxes"] = (num, n), 0, 0
                 level, current, in_props = "page", {}, True
+                st["props"] = current
             elif lv == 3:
                 close_box()
                 if st["page"] is None:
@@ -484,6 +487,15 @@ def validate(text, show=True, extra=None):
     close_page()
     if chapters == 0:
         E(0, 'no chapter found. Every chapter starts with "# N: Title"')
+    if "cover" in meta:
+        v, n = meta["cover"]
+        if norm(v) != "none" and v not in pages:
+            E(n, f'cover "{v}" is not a page of the book. Use the number of the cover page (e.g. "cover: 0.1"), '
+                 f'or "cover: none" only if the author asked for a book without a cover')
+    elif first_page:
+        W(0, 'header without "cover:": the first page of the book is used as the cover. '
+             'A book needs a cover page (AGENTS.md 3.8): add one before chapter 1 and set "cover: <its number>", '
+             'or "cover: none" only if the author asked for a book without a cover')
     if extra:
         errors += extra[0]
         warnings += extra[1]
@@ -550,6 +562,8 @@ def check_chapter_images(p, n, E, W):
 def check_page_images(p, n, E, W):
     if "logo" in p and not p.get("logo-prompt"):
         W(n, "page with logo but without logo-prompt")
+    if "image" in p and not p.get("image-prompt"):
+        W(n, "page with image but without image-prompt")
 
 
 def check_box(c, E, W):
@@ -1173,7 +1187,7 @@ def cmd_images(path):
             continue
         k, v = aliases.get(pm.group(1), pm.group(1)), pm.group(2).strip()
         if k in ("image", "logo"):
-            kind = "logo" if k == "logo" else ("opener" if level == 1 else "image")
+            kind = "logo" if k == "logo" else {1: "opener", 2: "page"}.get(level, "image")
             items.append({"file": v, "size": IMAGE_SIZE[kind], "prompt": ""})
         elif items:
             items[-1]["prompt"] = v
@@ -1481,7 +1495,7 @@ def pdf_page_count(path):
 
 
 def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=None, condition=None, pdfx="4",
-            force=False, show=False):
+            cover_pdf=None, force=False, show=False):
     import tempfile
     if pdfx not in PDFX_VERSIONS:
         print(f"--pdfx must be one of: {', '.join(PDFX_VERSIONS)}")
@@ -1491,6 +1505,9 @@ def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=Non
         return 1
     if icc and not os.path.isfile(icc):
         print(f"ICC profile not found: {icc}")
+        return 1
+    if cover_pdf and os.path.abspath(cover_pdf) == os.path.abspath(out):
+        print("--cover-pdf must be a different file from the book's PDF")
         return 1
     if not precheck(path, format):
         return 1
@@ -1517,26 +1534,42 @@ def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=Non
         rep = export_report(browser, index, params, tmp)
         if not rep or not report_ok(rep, skipped, force):
             return 1
-        rgb = os.path.join(tmp, "book.pdf")
-        _, err = run_browser(browser, index, params, tmp, ["--no-pdf-header-footer", f"--print-to-pdf={rgb}"])
-        if not os.path.isfile(rgb):
-            print("The browser did not write the PDF." + last_line(err))
-            return 1
-        n = pdf_page_count(rgb)
-        if n and n != rep["pages"]:
-            print(f"  WARNING [PDF] the PDF has {n} pages but the book has {rep['pages']}: open it and check")
-        os.makedirs(os.path.dirname(out), exist_ok=True)
-        if cmyk:
-            if not to_cmyk(gs, rgb, out + ".part", rep, tmp, icc, condition, pdfx):
+        # with --cover-pdf the book is printed twice: every page but the cover, then the cover alone
+        parts = [(out, None, rep["pages"])]
+        if cover_pdf:
+            if rep["cover"] is None:
+                print('Not exported: the book has no cover page ("cover: none"), so there is nothing for --cover-pdf.')
                 return 1
-            os.replace(out + ".part", out)
-        else:
-            shutil.copyfile(rgb, out)
+            parts = [(out, "interior", rep["pages"] - 1), (os.path.abspath(cover_pdf), "cover", 1)]
+        for k, (dst, part, expected) in enumerate(parts):
+            rgb = os.path.join(tmp, f"part-{k}.pdf")
+            _, err = run_browser(browser, index, dict(params, **({"part": part} if part else {})), tmp,
+                                 ["--no-pdf-header-footer", f"--print-to-pdf={rgb}"])
+            if not os.path.isfile(rgb):
+                print("The browser did not write the PDF." + last_line(err))
+                return 1
+            n = pdf_page_count(rgb)
+            if n and n != expected:
+                print(f"  WARNING [PDF] {os.path.basename(dst)} has {n} pages instead of {expected}: open it and check")
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            if cmyk:
+                if not to_cmyk(gs, rgb, dst + ".part", rep, tmp, icc, condition, pdfx):
+                    return 1
+                os.replace(dst + ".part", dst)
+            else:
+                shutil.copyfile(rgb, dst)
     size = rep["format"]["name"] + (f' + {rep["bleed"]} mm bleed on each side' if rep["bleed"] else "")
     color = f"CMYK {PDFX_VERSIONS[pdfx]}, profile {os.path.basename(icc)}" if cmyk else "RGB (screen)"
-    print(f"PDF: {out}\n  {rep['pages']} pages, {size}, {color}")
+    print(f"PDF: {out}\n  {parts[0][2]} pages, {size}, {color}")
+    if cover_pdf:
+        print(f"Cover PDF: {parts[1][0]}\n  the front cover page alone, same size and colour")
+    elif rep["cover"] is not None:
+        print("  The cover is the book's page " + str(rep["cover"] + 1) + ". Stores that take the cover separately "
+              "(KDP, IngramSpark…) need --cover-pdf cover.pdf.")
     if show:
         show_file(out)
+        if cover_pdf:
+            show_file(parts[1][0])
     return 0
 
 
@@ -1625,7 +1658,11 @@ def cmd_epub(path, out, format=None, theme=None, force=False, show=False):
                '<meta property="rendition:spread">auto</meta>\n</metadata>\n<manifest>\n' + "\n".join(manifest) +
                '\n</manifest>\n<spine>\n' + "\n".join(f'<itemref idref="{n}"/>' for n, _ in pages) + '\n</spine>\n</package>\n')
         toc = "\n".join(f'<li><a href="p{t["page"] + 1:04d}.xhtml">{xml_escape(t["title"])}</a></li>' for t in rep["toc"])
-        nav = xhtml_doc(lang, title, "", f'<nav epub:type="toc" id="toc"><h1>{xml_escape(title)}</h1>\n<ol>\n{toc}\n</ol>\n</nav>')
+        # landmarks: where the cover is and where the book itself starts
+        marks = ([f'<li><a epub:type="cover" href="p{rep["cover"] + 1:04d}.xhtml">Cover</a></li>'] if rep["cover"] is not None else [])
+        marks += [f'<li><a epub:type="bodymatter" href="p{rep["toc"][0]["page"] + 1:04d}.xhtml">Start</a></li>'] if rep["toc"] else []
+        nav = xhtml_doc(lang, title, "", f'<nav epub:type="toc" id="toc"><h1>{xml_escape(title)}</h1>\n<ol>\n{toc}\n</ol>\n</nav>'
+                        + (f'\n<nav epub:type="landmarks" id="landmarks" hidden="hidden"><ol>\n{chr(10).join(marks)}\n</ol></nav>' if marks else ""))
         container = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                      '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">\n'
                      '<rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles>\n'
@@ -1709,7 +1746,7 @@ def cmd_package(path, out, *exports):
     return 0
 
 
-VALUE_OPTS = ("out", "language", "format", "theme", "icc", "condition", "pdfx")
+VALUE_OPTS = ("out", "language", "format", "theme", "icc", "condition", "pdfx", "cover-pdf")
 FLAG_OPTS = {"bleed": "bleed", "cmyk": "cmyk", "force": "force", "open": "show"}   # --flag: keyword
 
 
@@ -1723,7 +1760,7 @@ def main(argv):
             if k + 1 >= len(rest):
                 print(__doc__)
                 return 1
-            opts[name] = rest[k + 1]
+            opts[name.replace("-", "_")] = rest[k + 1]
             k += 2
         elif name in FLAG_OPTS:
             opts[FLAG_OPTS[name]] = True
@@ -1741,7 +1778,7 @@ def main(argv):
         "show": (cmd_show, 2, ()), "replace": (cmd_replace, 3, ()), "append": (cmd_append, 2, ()),
         "images": (cmd_images, 1, ()), "pdf-to-images": (cmd_pdf_to_images, 2, ()),
         "migrate": (cmd_migrate, 1, ("out", "language")), "migrate-css": (cmd_migrate_css, 1, ("out",)),
-        "pdf": (cmd_pdf, 2, export + ("bleed", "cmyk", "icc", "condition", "pdfx")),
+        "pdf": (cmd_pdf, 2, export + ("bleed", "cmyk", "icc", "condition", "pdfx", "cover_pdf")),
         "epub": (cmd_epub, 2, export), "package": (cmd_package, None, ()),
     }
     if c not in cmds:

@@ -5,6 +5,7 @@ Resized/cropped for this sample book.
 
 | file | photo | source |
 |---|---|---|
+| cover.jpg | Books Bookshelf (portrait crop) | https://stocksnap.io/photo/books-bookshelf-0SP70JWWOK |
 | ch1-opener.jpg | Wood Typewriter | https://stocksnap.io/photo/wood-typewriter-VV0697QWMS |
 | ch2-opener.jpg | Books Bookshelf | https://stocksnap.io/photo/books-bookshelf-0SP70JWWOK |
 | 1-1-logo.jpg | Typography Letter | https://stocksnap.io/photo/typography-letter-IMZP3JUC0G |

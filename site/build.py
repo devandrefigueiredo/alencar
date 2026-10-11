@@ -170,6 +170,7 @@ this page) and the reference book under <a href="samples/the-art-of-lorem-ipsum-
 """
 
 ROLE = [
+    (r"^cover\.", "cover page 0.1 (portrait, 1024 × 1536)"),
     (r"^ch(\d+)-opener\.", "chapter {0} opener (landscape, 1536 × 1024)"),
     (r"^(\d+)-(\d+)-logo\.", "logo of page {0}.{1} (square, 1024 × 1024)"),
     (r"^(\d+)-(\d+)-[\w-]+\.", "image box of page {0}.{1} (landscape, 1536 × 1024)"),

@@ -113,6 +113,7 @@ going. You can also run the commands yourself (Google Chrome or Microsoft Edge m
 ```
 python engine/tools/book_tools.py pdf  books/<book>/data.md book.pdf                         (screen, home printer)
 python engine/tools/book_tools.py pdf  books/<book>/data.md print.pdf --bleed --cmyk          (print shop, print-on-demand)
+python engine/tools/book_tools.py pdf  books/<book>/data.md print.pdf --cover-pdf cover.pdf   (the cover in its own file)
 python engine/tools/book_tools.py epub books/<book>/data.md book.epub                        (Apple Books, Kobo, Google Play…)
 python engine/tools/book_tools.py package books/<book>/data.md book.zip print.pdf book.epub  (everything in one zip)
 ```
@@ -120,6 +121,9 @@ python engine/tools/book_tools.py package books/<book>/data.md book.zip print.pd
 `--cmyk` makes a PDF/X-4 in CMYK and needs [Ghostscript](https://ghostscript.com/releases/gsdnld.html); add
 `--icc profile.icc` with the colour profile your print shop gives you. `--format 6x9in` changes the page size
 for that file only. Add `--open` to see the result.
+
+Every book starts with a cover page (the page before chapter 1). Stores such as Amazon KDP ask for the cover
+as a separate file: `--cover-pdf` takes it out of the book's PDF and saves it on its own.
 
 ## 5. Starting a new book
 

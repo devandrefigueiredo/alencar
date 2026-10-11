@@ -358,6 +358,8 @@ const PROBLEMS = {
     color: a => `"${a.key}: ${a.name}" is not a valid name (line ${a.line}). Use letters, digits and "-" only, starting with a letter`,
     width: a => `width "${a.name}" does not exist (line ${a.line}). Use: 1/4, 1/3, 1/2, 2/3, 3/4 or full`,
     "img-box": a => `box "${a.title}" is an image box but has no "image:" (line ${a.line})`,
+    "cover-missing": a => `"cover: ${a.value}" names no page of the book. Use the number of the cover page (e.g. 0.1), or "none" only if the author asked for a book without a cover`,
+    "cover-unset": a => `no "cover:" in the header: the first page (${a.title}) is used as the cover. Add a cover page and set "cover: <its number>", or "cover: none" only if the author asked for a book without a cover`,
     type: a => `type "${a.name}" does not exist (line ${a.line}). Use: text, image or cards`,
     dup: a => `page "${a.num}" appears twice (line ${a.line})`,
     empty: a => `page "${a.num} ${a.title}" has no box (###) (line ${a.line})`,
@@ -387,6 +389,8 @@ const PROBLEMS = {
     color: a => `"${a.key}: ${a.name}" não é um nome válido (linha ${a.line}). Use só letras, números e "-", começando com letra`,
     width: a => `largura "${a.name}" não existe (linha ${a.line}). Use: 1/4, 1/3, 1/2, 2/3, 3/4 ou full`,
     "img-box": a => `a caixa "${a.title}" é do tipo imagem mas não tem "image:" (linha ${a.line})`,
+    "cover-missing": a => `"cover: ${a.value}" não aponta para nenhuma página do livro. Use o número da página de capa (ex.: 0.1), ou "none" só se o autor pediu um livro sem capa`,
+    "cover-unset": a => `sem "cover:" no cabeçalho: a primeira página (${a.title}) é usada como capa. Crie uma página de capa e defina "cover: <número dela>", ou "cover: none" só se o autor pediu um livro sem capa`,
     type: a => `tipo "${a.name}" não existe (linha ${a.line}). Use: text, image ou cards`,
     dup: a => `a página "${a.num}" aparece duas vezes (linha ${a.line})`,
     empty: a => `a página "${a.num} ${a.title}" não tem nenhuma caixa (###) (linha ${a.line})`,
@@ -416,6 +420,8 @@ const PROBLEMS = {
     color: a => `"${a.key}: ${a.name}" no es un nombre válido (línea ${a.line}). Usa solo letras, números y "-", empezando por una letra`,
     width: a => `el ancho "${a.name}" no existe (línea ${a.line}). Usa: 1/4, 1/3, 1/2, 2/3, 3/4 o full`,
     "img-box": a => `el recuadro "${a.title}" es de imagen pero no tiene "image:" (línea ${a.line})`,
+    "cover-missing": a => `"cover: ${a.value}" no corresponde a ninguna página del libro. Usa el número de la página de portada (p. ej. 0.1), o "none" solo si el autor pidió un libro sin portada`,
+    "cover-unset": a => `no hay "cover:" en la cabecera: la primera página (${a.title}) se usa como portada. Añade una página de portada y define "cover: <su número>", o "cover: none" solo si el autor pidió un libro sin portada`,
     type: a => `el tipo "${a.name}" no existe (línea ${a.line}). Usa: text, image o cards`,
     dup: a => `la página "${a.num}" aparece dos veces (línea ${a.line})`,
     empty: a => `la página "${a.num} ${a.title}" no tiene ningún recuadro (###) (línea ${a.line})`,
@@ -445,6 +451,8 @@ const PROBLEMS = {
     color: a => `"${a.key}: ${a.name}" n'est pas un nom valide (ligne ${a.line}). Utilisez uniquement des lettres, des chiffres et "-", en commençant par une lettre`,
     width: a => `la largeur "${a.name}" n'existe pas (ligne ${a.line}). Utilisez : 1/4, 1/3, 1/2, 2/3, 3/4 ou full`,
     "img-box": a => `l'encadré "${a.title}" est un encadré d'image mais n'a pas de "image:" (ligne ${a.line})`,
+    "cover-missing": a => `"cover: ${a.value}" ne désigne aucune page du livre. Indiquez le numéro de la page de couverture (ex. 0.1), ou "none" seulement si l'auteur a demandé un livre sans couverture`,
+    "cover-unset": a => `pas de "cover:" dans l'en-tête : la première page (${a.title}) sert de couverture. Ajoutez une page de couverture et indiquez "cover: <son numéro>", ou "cover: none" seulement si l'auteur a demandé un livre sans couverture`,
     type: a => `le type "${a.name}" n'existe pas (ligne ${a.line}). Utilisez : text, image ou cards`,
     dup: a => `la page "${a.num}" apparaît deux fois (ligne ${a.line})`,
     empty: a => `la page "${a.num} ${a.title}" n'a aucun encadré (###) (ligne ${a.line})`,
@@ -474,6 +482,8 @@ const PROBLEMS = {
     color: a => `"${a.key}: ${a.name}" ist kein gültiger Name (Zeile ${a.line}). Nur Buchstaben, Ziffern und "-" verwenden, beginnend mit einem Buchstaben`,
     width: a => `Breite "${a.name}" existiert nicht (Zeile ${a.line}). Verwenden Sie: 1/4, 1/3, 1/2, 2/3, 3/4 oder full`,
     "img-box": a => `Kasten "${a.title}" ist ein Bildkasten, hat aber kein "image:" (Zeile ${a.line})`,
+    "cover-missing": a => `"cover: ${a.value}" bezeichnet keine Seite des Buchs. Geben Sie die Nummer der Umschlagseite an (z. B. 0.1), oder "none" nur, wenn der Autor ein Buch ohne Umschlag wünscht`,
+    "cover-unset": a => `kein "cover:" im Kopf: die erste Seite (${a.title}) dient als Umschlag. Fügen Sie eine Umschlagseite hinzu und setzen Sie "cover: <ihre Nummer>", oder "cover: none" nur, wenn der Autor ein Buch ohne Umschlag wünscht`,
     type: a => `Typ "${a.name}" existiert nicht (Zeile ${a.line}). Verwenden Sie: text, image oder cards`,
     dup: a => `Seite "${a.num}" kommt doppelt vor (Zeile ${a.line})`,
     empty: a => `Seite "${a.num} ${a.title}" hat keinen Kasten (###) (Zeile ${a.line})`,
@@ -493,11 +503,11 @@ const PROBLEMS = {
 };
 /* short labels shown in front of each problem */
 const KIND_LABEL = {
-  en: {data: "DATA.MD", icon: "ICON", color: "NAME", width: "WIDTH", image: "IMAGE", type: "TYPE", number: "NUMBER", empty: "EMPTY", overflow: "OVERFLOW", font: "FONT SIZE", layout: "LAYOUT", style: "STYLE", format: "PAGE SIZE"},
-  pt: {data: "DATA.MD", icon: "ÍCONE", color: "NOME", width: "LARGURA", image: "IMAGEM", type: "TIPO", number: "NÚMERO", empty: "VAZIA", overflow: "ESTOURO", font: "LETRA", layout: "LAYOUT", style: "ESTILO", format: "TAMANHO"},
-  es: {data: "DATA.MD", icon: "ICONO", color: "NOMBRE", width: "ANCHO", image: "IMAGEN", type: "TIPO", number: "NÚMERO", empty: "VACÍA", overflow: "DESBORDE", font: "LETRA", layout: "LAYOUT", style: "ESTILO", format: "TAMAÑO"},
-  fr: {data: "DATA.MD", icon: "ICÔNE", color: "NOM", width: "LARGEUR", image: "IMAGE", type: "TYPE", number: "NUMÉRO", empty: "VIDE", overflow: "DÉBORDEMENT", font: "TAILLE DU TEXTE", layout: "LAYOUT", style: "STYLE", format: "FORMAT"},
-  de: {data: "DATA.MD", icon: "SYMBOL", color: "NAME", width: "BREITE", image: "BILD", type: "TYP", number: "NUMMER", empty: "LEER", overflow: "ÜBERLAUF", font: "SCHRIFTGRÖSSE", layout: "LAYOUT", style: "STIL", format: "FORMAT"}
+  en: {cover: "COVER", data: "DATA.MD", icon: "ICON", color: "NAME", width: "WIDTH", image: "IMAGE", type: "TYPE", number: "NUMBER", empty: "EMPTY", overflow: "OVERFLOW", font: "FONT SIZE", layout: "LAYOUT", style: "STYLE", format: "PAGE SIZE"},
+  pt: {cover: "CAPA", data: "DATA.MD", icon: "ÍCONE", color: "NOME", width: "LARGURA", image: "IMAGEM", type: "TIPO", number: "NÚMERO", empty: "VAZIA", overflow: "ESTOURO", font: "LETRA", layout: "LAYOUT", style: "ESTILO", format: "TAMANHO"},
+  es: {cover: "PORTADA", data: "DATA.MD", icon: "ICONO", color: "NOMBRE", width: "ANCHO", image: "IMAGEN", type: "TIPO", number: "NÚMERO", empty: "VACÍA", overflow: "DESBORDE", font: "LETRA", layout: "LAYOUT", style: "ESTILO", format: "TAMAÑO"},
+  fr: {cover: "COUVERTURE", data: "DATA.MD", icon: "ICÔNE", color: "NOM", width: "LARGEUR", image: "IMAGE", type: "TYPE", number: "NUMÉRO", empty: "VIDE", overflow: "DÉBORDEMENT", font: "TAILLE DU TEXTE", layout: "LAYOUT", style: "STYLE", format: "FORMAT"},
+  de: {cover: "UMSCHLAG", data: "DATA.MD", icon: "SYMBOL", color: "NAME", width: "BREITE", image: "BILD", type: "TYP", number: "NUMMER", empty: "LEER", overflow: "ÜBERLAUF", font: "SCHRIFTGRÖSSE", layout: "LAYOUT", style: "STIL", format: "FORMAT"}
 };
 
 /* Labels printed inside the book, by the book's "language:" */
@@ -676,9 +686,9 @@ function formatFrom(raw) {
 
 /* Properties accepted at each level of data.md */
 const KEYS = {
-  book:    ["title","author","chapters","footer","first-page","format","theme","language"],
+  book:    ["title","author","chapters","footer","first-page","format","theme","language","cover"],
   chapter: ["subtitle","tags","image","image-prompt","opener","layout","class"],
-  page:    ["subtitle","lede","logo","logo-prompt","layout","class"],
+  page:    ["subtitle","lede","logo","logo-prompt","image","image-prompt","layout","class"],
   box:     ["icon","color","width","height","type","columns","image","image-prompt","caption","title","layout","class","area"]
 };
 /* Old Portuguese keys, only to point people to the new name */
@@ -691,11 +701,11 @@ const TYPES = ["text","image","cards"];
 const TOKEN = /^[a-z][a-z0-9_-]*$/i;
 /* Default image sizes (the ones image generators usually offer) */
 const IMG_SIZE = {
-  en: {logo:"1024 × 1024 (square)", image:"1536 × 1024 (landscape)", opener:"1536 × 1024 (landscape)"},
-  pt: {logo:"1024 × 1024 (quadrada)", image:"1536 × 1024 (horizontal)", opener:"1536 × 1024 (horizontal)"},
-  es: {logo:"1024 × 1024 (cuadrada)", image:"1536 × 1024 (horizontal)", opener:"1536 × 1024 (horizontal)"},
-  fr: {logo:"1024 × 1024 (carrée)", image:"1536 × 1024 (paysage)", opener:"1536 × 1024 (paysage)"},
-  de: {logo:"1024 × 1024 (quadratisch)", image:"1536 × 1024 (Querformat)", opener:"1536 × 1024 (Querformat)"}
+  en: {logo:"1024 × 1024 (square)", page:"1024 × 1536 (portrait)", image:"1536 × 1024 (landscape)", opener:"1536 × 1024 (landscape)"},
+  pt: {logo:"1024 × 1024 (quadrada)", page:"1024 × 1536 (vertical)", image:"1536 × 1024 (horizontal)", opener:"1536 × 1024 (horizontal)"},
+  es: {logo:"1024 × 1024 (cuadrada)", page:"1024 × 1536 (vertical)", image:"1536 × 1024 (horizontal)", opener:"1536 × 1024 (horizontal)"},
+  fr: {logo:"1024 × 1024 (carrée)", page:"1024 × 1536 (portrait)", image:"1536 × 1024 (paysage)", opener:"1536 × 1024 (paysage)"},
+  de: {logo:"1024 × 1024 (quadratisch)", page:"1024 × 1536 (Hochformat)", image:"1536 × 1024 (Querformat)", opener:"1536 × 1024 (Querformat)"}
 };
 
 /* Icons (simple 24×24 line drawings) */
@@ -811,7 +821,7 @@ function parseBook(src) {
 
   let ch = null, pg = null, bx = null, cur = null, inProps = false, last = null;
   const newChapter = (num, title, line) => { ch = {num, title, props: {}, blocks: [], pages: [], line}; book.chapters.push(ch); pg = bx = null; return ch; };
-  const newPage = (num, title, line) => { if (!ch) newChapter("", "", line); pg = {num, title, props: {}, boxes: [], line, ch}; ch.pages.push(pg); bx = null; return pg; };
+  const newPage = (num, title, line) => { if (!ch) newChapter("", "", line).front = true; pg = {num, title, props: {}, boxes: [], line, ch}; ch.pages.push(pg); bx = null; return pg; };
   const newBox = (title, line) => { if (!pg) newPage("", "", line); bx = {title, props: {}, blocks: [], line, pg}; pg.boxes.push(bx); return bx; };
   const target = () => {
     if (cur.level === "chapter") return ch.blocks;
@@ -1210,18 +1220,20 @@ function pageShell(n, id, fallback, cls) {
   return el;
 }
 
-function renderPage(pg, n) {
+function renderPage(pg, n, cover = false) {
   const ch = pg.ch;
   pg.ctx = {
     num: pg.num || "", title: pg.title || "", subtitle: pg.props.subtitle || "", lede: pg.props.lede || "",
-    logo: pg.props.logo || "", number: String(n), side: n % 2 ? "odd" : "even", class: bookToken("class", pg.props.class, pg.line, pg)
+    logo: pg.props.logo || "", image: pg.props.image || "", number: cover ? "" : String(n), side: cover || n % 2 ? "odd" : "even", class: bookToken("class", pg.props.class, pg.line, pg)
   };
   const slots = {
     boxes: el => { for (const bx of pg.boxes) el.append(renderBox(bx)); },
-    logo: el => { if (pg.props.logo) setImg(el, pg.props.logo, "logo", pg.props["logo-prompt"], pg.title); }
+    logo: el => { if (pg.props.logo) setImg(el, pg.props.logo, "logo", pg.props["logo-prompt"], pg.title); },
+    image: el => { if (pg.props.image) setImg(el, pg.props.image, "page", pg.props["image-prompt"], pg.title); }
   };
   const {frag, id, fallback} = instantiate("page", pg.props.layout, {...bookCtx(), chapter: ch.ctx, page: pg.ctx}, slots, pg.line, pg);
-  const el = pageShell(n, id, fallback, [ch.ctx.class, pg.ctx.class].filter(Boolean).join(" "));
+  const el = pageShell(cover ? n - 1 : n, id, fallback, [ch.ctx.class, pg.ctx.class, cover ? "cover" : ""].filter(Boolean).join(" "));
+  if (cover) el.classList.replace("even", "odd");
   el.append(frag);
   return el;
 }
@@ -1271,8 +1283,10 @@ async function render(keepPlace = true) {
   let n = parseInt(meta["first-page"] || "1", 10) || 1;
   const frag = document.createDocumentFragment(), list = [];
   const seen = new Set();
+  /* the cover page takes no page number: the page after it is "first-page" (a right-hand page) */
+  const coverNum = (meta.cover || "").trim(), noCover = norm(coverNum) === "none";
   for (const ch of book.chapters) {
-    const hasOpener = norm(ch.props.opener || "yes") !== "no";
+    const hasOpener = !ch.front && norm(ch.props.opener || "yes") !== "no";   // front pages (before chapter 1) have none
     ch.ctx = chapterCtx(ch, hasOpener ? n : n - 1);
     if (hasOpener) {
       const el = renderOpener(ch, n); frag.append(el);
@@ -1281,13 +1295,16 @@ async function render(keepPlace = true) {
     for (const pg of ch.pages) {
       if (pg.num && seen.has(pg.num)) addProblem("err", "number", "dup", {num: pg.num, line: pg.line}, pg);
       seen.add(pg.num);
-      if (!pg.boxes.length) addProblem("warn", "empty", "empty", {num: pg.num, title: pg.title, line: pg.line}, pg);
-      const el = renderPage(pg, n); frag.append(el);
-      list.push({type: "sheet", pg, ch, n, el, label: pg.num, title: pg.title}); n++;
+      if (!pg.boxes.length && !pg.props.layout) addProblem("warn", "empty", "empty", {num: pg.num, title: pg.title, line: pg.line}, pg);
+      const cover = !noCover && (coverNum ? pg.num === coverNum : !list.length);
+      const el = renderPage(pg, n, cover); frag.append(el);
+      list.push({type: "sheet", pg, ch, n: cover ? n - 1 : n, el, label: pg.num, title: pg.title, cover});
+      if (!cover) n++;
     }
   }
   doc.replaceChildren(frag);
   state.pages = list;
+  state.cover = coverIndex();
   $("#pgtot").textContent = `/ ${state.pages.length ? state.pages[state.pages.length - 1].n : 0}`;
 
   if (state.zoom == null) state.zoom = prefs().zoom || "fit";
@@ -1301,6 +1318,15 @@ async function render(keepPlace = true) {
   if (keepPlace) goTo(Math.min(keep, state.pages.length - 1), false);
   if ($("#q").value.trim()) runSearch(false);
   state.rendering = false;
+}
+/* The cover page: "cover:" names a page number, "none" means no cover, nothing means the first page */
+function coverIndex() {
+  const v = (state.book.meta.cover || "").trim();
+  if (!state.pages.length || norm(v) === "none") return -1;
+  const k = state.pages.findIndex(p => p.cover);
+  if (!v) { addProblem("warn", "cover", "cover-unset", {title: state.pages[0].title || state.pages[0].label || "1"}); return Math.max(k, 0); }
+  if (k < 0) addProblem("err", "cover", "cover-missing", {value: v});
+  return k;
 }
 /* parser warnings are stored as {line, code, args}; shown as "line N: message" */
 PROBLEMS.en.data = a => `line ${a.line}: ${PROBLEMS.en[a.code](a.args)}`;
@@ -2344,16 +2370,20 @@ function exportReport() {
   const f = currentFormat(), doc = $("#doc"), meta = state.book?.meta || {};
   const rep = {engine: VIEWER_VERSION, ready: !!state.book, title: meta.title || "", author: meta.author || "",
     language: meta.language || "en", cls: doc.className, format: {id: f.id, w: f.w, h: f.h, name: fmtNameEn(f)},
-    bleed: bleedMm(f), pages: state.pages.length, toc: [], problems: [], xhtml: []};
+    bleed: bleedMm(f), pages: state.pages.length, cover: state.cover >= 0 ? state.cover : null, toc: [], problems: [], xhtml: []};
   for (const p of state.problems) {
     const args = p.code === "font" ? {...p.args, fmt: p.args.fmtEn} : p.args;
     rep.problems.push({level: p.level, kind: kindText(p.kind, "en"), text: PROBLEMS.en[p.code](args)});
   }
   for (const im of state.missing.values()) rep.problems.push({level: "warn", kind: "MISSING IMAGE", text: im.path});
   for (const ch of state.book?.chapters || []) {
+    if (ch.front) continue;
     const k = state.pages.findIndex(p => p.ch === ch);
     if (k >= 0) rep.toc.push({title: [ch.num, ch.title].filter(Boolean).join(". ") || BL().chapter, page: k});
   }
+  /* part=cover prints only the cover page, part=interior every page but the cover */
+  const part = EXPORT.get("part");
+  if (part === "cover" || part === "interior") state.pages.forEach((p, k) => p.el.classList.toggle("skip", (k === state.cover) !== (part === "cover")));
   if (EXPORT.get("export") === "epub") {
     const xs = new XMLSerializer();
     for (const p of state.pages) {

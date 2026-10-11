@@ -104,7 +104,9 @@ JSON report into a `<script id="book-export">` (`exportReport`): the problems in
 contents and, for EPUB, every page serialized as XHTML. A first `--dump-dom` run reads the report; the tool stops
 on errors.
 
-- PDF: a second run with `--print-to-pdf` (the viewer's `@page` size and print CSS). `--cmyk` passes it through
+- PDF: a second run with `--print-to-pdf` (the viewer's `@page` size and print CSS). With `--cover-pdf` it runs
+  twice, with `part=interior` and `part=cover`: the viewer hides the other pages (`.page.skip`) before printing.
+  The cover page is the one `cover:` names (default: the first page); it takes no page number (`renderPage`). `--cmyk` passes it through
   Ghostscript: PDF/X-4 (or 3) in CMYK with an output intent (`--icc`, or Ghostscript's `default_cmyk.icc`), links
   dropped (PDF/X forbids annotations), TrimBox/BleedBox set page by page by an `EndPage` procedure (Ghostscript
   ignores `PDFXTrimBoxToMediaBoxOffset` for PDF input).

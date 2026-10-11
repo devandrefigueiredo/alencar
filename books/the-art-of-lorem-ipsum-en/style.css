@@ -226,3 +226,22 @@
 .book .cv-tags { flex: none; margin-top: calc(var(--u)*2.4); font-size: calc(var(--u)*1.7); letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
 .book .cv-tags span + span::before { content: "·"; margin: 0 .7em; color: var(--color-accent); }
 .book .cv-author { flex: none; margin-top: calc(var(--u)*1.2); font-size: calc(var(--u)*1.7); letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
+
+/* ---------- 12. COVER (the page with "layout: cover", before chapter 1) ----------
+   The photo fills the whole page, bleed included; title and author sit on a fade at the bottom. */
+.book .page[data-layout="cover"] { background: var(--opener-bg); color: var(--opener-color); }
+.book .cvr-img { position: absolute; inset: 0; }
+.book .cvr-img .img { position: absolute; inset: 0; }
+.book .cvr-img .img img { object-fit: cover; }
+.book .cvr-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--opener-bg) 22%, transparent 62%); }
+.book .cvr-tx {
+  position: absolute; left: calc(var(--b) + var(--u)*8); right: calc(var(--b) + var(--u)*8); bottom: calc(var(--b) + var(--u)*15);
+  height: calc(var(--ph)*.24mm); display: flex; flex-direction: column; justify-content: safe flex-end; overflow: hidden; --ks: calc(var(--u)*10);
+  border-left: calc(var(--u)*1) solid var(--color-accent); padding-left: calc(var(--u)*3);
+}
+.book .cvr-tx h1 { margin: 0; font-family: var(--font-heading); font-weight: 700; font-size: var(--ks); line-height: 1; letter-spacing: -.02em; }
+.book .cvr-tx p { margin: .5em 0 0; font-family: var(--font-heading); font-style: italic; font-size: calc(var(--ks)*.32); line-height: 1.25; opacity: .85; }
+.book .cvr-author {
+  position: absolute; left: calc(var(--b) + var(--u)*12); bottom: calc(var(--b) + var(--u)*8);
+  font-size: calc(var(--u)*2.2); letter-spacing: .25em; text-transform: uppercase; opacity: .8;
+}
