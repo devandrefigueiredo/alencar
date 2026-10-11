@@ -1,0 +1,192 @@
+/* BOOK VIEWER ENGINE — styles. Shared by every book. */
+:root{
+  --ui-bg:#0f1724; --ui-bg2:#172235; --ui-fg:#e8edf6; --ui-muted:#93a1b8; --ui-line:#26344d;
+  --ui-accent:#2bb3a3; --ui-danger:#e5484d; --ui-warn:#f5a524;
+  --desk:#2a3140;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--desk);color:var(--ui-fg);font:14px/1.4 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+
+/* ---------- toolbar ---------- */
+#bar{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;gap:6px;padding:0 10px;background:var(--ui-bg);border-bottom:1px solid var(--ui-line);z-index:20}
+#bar .sep{width:1px;height:26px;background:var(--ui-line);margin:0 4px}
+#bar .title{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:22vw;margin:0 6px}
+#bar .grow{flex:1}
+.tb{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 9px;border:1px solid transparent;border-radius:7px;background:transparent;white-space:nowrap}
+.tb:hover{background:var(--ui-bg2);border-color:var(--ui-line)}
+.tb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tb.primary{background:var(--ui-accent);color:#04201d;font-weight:600}
+.tb.primary:hover{background:#3cc9b8;border-color:transparent}
+.tb .badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;font-size:11px;font-weight:700;display:inline-grid;place-items:center;background:var(--ui-line)}
+.tb .badge.err{background:var(--ui-danger);color:#fff}
+.tb .badge.warn{background:var(--ui-warn);color:#1b1300}
+.field{display:flex;align-items:center;height:32px;border:1px solid var(--ui-line);border-radius:7px;background:var(--ui-bg2);padding:0 4px 0 8px;gap:4px}
+.field input{border:0;outline:0;background:transparent;width:46px;text-align:center}
+.field.search input{width:170px;text-align:left}
+.field .count{color:var(--ui-muted);font-size:12px;min-width:44px;text-align:right}
+.field .mini{height:24px;width:24px;padding:0;border:0;border-radius:5px;background:transparent;display:grid;place-items:center}
+.field .mini:hover{background:var(--ui-line)}
+.field .mini svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#zoomval{min-width:44px;text-align:center;color:var(--ui-muted);font-size:12px}
+@media (max-width:1500px){ #bar .title{display:none} }
+@media (max-width:1380px){ .tb:not(.primary) .lbl{display:none} }
+@media (max-width:900px){ .tb .lbl{display:none} .field.search input{width:110px} }
+
+/* ---------- table of contents ---------- */
+#toc{position:fixed;top:48px;left:0;bottom:0;width:290px;background:var(--ui-bg);border-right:1px solid var(--ui-line);overflow:auto;padding:10px 8px 30px;z-index:15;transform:translateX(-100%);transition:transform .18s}
+body.toc-open #toc{transform:none}
+body.toc-open #view{left:290px}
+#toc .ch{font-weight:700;color:var(--ui-accent);font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:12px 8px 4px}
+#toc a{display:flex;gap:8px;align-items:baseline;padding:5px 8px;border-radius:6px;color:var(--ui-fg);text-decoration:none;font-size:13px}
+#toc a:hover{background:var(--ui-bg2)}
+#toc a.cur{background:var(--ui-bg2);outline:1px solid var(--ui-line)}
+#toc a .n{color:var(--ui-muted);min-width:34px;font-variant-numeric:tabular-nums}
+#toc a .t{flex:1}
+#toc a .p{color:var(--ui-muted);font-size:11px}
+
+/* ---------- reading area ---------- */
+#view{position:fixed;top:48px;left:0;right:0;bottom:0;overflow:auto;transition:left .18s}
+#doc{padding:28px 0 60px;width:max-content;margin:0 auto}
+#status{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ui-bg);border:1px solid var(--ui-line);padding:8px 14px;border-radius:8px;z-index:40;box-shadow:0 6px 24px #0007;max-width:min(680px,92vw)}
+
+/* ---------- problems panel ---------- */
+#probs{position:fixed;top:48px;right:0;bottom:0;width:420px;max-width:96vw;background:var(--ui-bg);border-left:1px solid var(--ui-line);z-index:16;display:flex;flex-direction:column}
+#probs header{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--ui-line)}
+#probs header h2{font-size:15px;margin:0;flex:1}
+#probs .list{overflow:auto;padding:8px 10px 30px}
+#probs .p{padding:9px 10px;border-radius:7px;border:1px solid var(--ui-line);margin:6px 0;background:var(--ui-bg2);font-size:13px;cursor:pointer}
+#probs .p:hover{border-color:var(--ui-muted)}
+#probs .p b{display:inline-block;font-size:10px;letter-spacing:.05em;padding:1px 6px;border-radius:4px;margin-right:6px;vertical-align:1px}
+#probs .p.err b{background:var(--ui-danger);color:#fff}
+#probs .p.warn b{background:var(--ui-warn);color:#1b1300}
+#probs .p.info b{background:var(--ui-line)}
+#probs .p .prompt{display:block;color:var(--ui-muted);font-size:12px;margin-top:4px}
+#probs .empty{color:var(--ui-muted);padding:20px;text-align:center}
+
+/* ---------- overlays (splash and print) ---------- */
+.overlay{position:fixed;inset:0;background:#0b111ccc;backdrop-filter:blur(3px);z-index:50;display:grid;place-items:center;padding:20px}
+.card{background:var(--ui-bg);border:1px solid var(--ui-line);border-radius:14px;box-shadow:0 20px 60px #000a;padding:26px 28px;max-width:640px;width:100%;max-height:calc(100vh - 40px);overflow:auto}
+.card h1{font-size:22px;margin:0 0 8px}
+.card h2{font-size:20px;margin:0 0 4px}
+.card h3{font-size:14px;margin:18px 0 8px;color:var(--ui-accent);text-transform:uppercase;letter-spacing:.04em}
+.card p{color:#c9d3e3;margin:8px 0}
+.card .muted{color:var(--ui-muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 18px;border-radius:9px;border:1px solid var(--ui-line);background:var(--ui-bg2);font-weight:600}
+.btn:hover{border-color:var(--ui-muted)}
+.btn.primary{background:var(--ui-accent);border-color:var(--ui-accent);color:#04201d}
+.btn.primary:hover{background:#3cc9b8}
+.btn.big{height:48px;font-size:16px;width:100%;margin-top:10px}
+.drop{margin-top:16px;border:2px dashed var(--ui-line);border-radius:12px;padding:18px;text-align:center;color:var(--ui-muted)}
+.drop.over{border-color:var(--ui-accent);color:var(--ui-fg)}
+.err-msg{color:#ff8b8e;font-weight:600}
+
+#printdlg .card{max-width:1080px}
+#printdlg .cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px}
+@media (max-width:900px){ #printdlg .cols{grid-template-columns:1fr} }
+.fmt-group{margin:10px 0 4px;font-size:12px;color:var(--ui-muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.fmt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--ui-line);border-radius:9px;margin:5px 0;cursor:pointer;background:var(--ui-bg2)}
+.fmt:hover{border-color:var(--ui-muted)}
+.fmt.sel{border-color:var(--ui-accent);box-shadow:inset 0 0 0 1px var(--ui-accent)}
+.fmt input{margin-top:3px;accent-color:var(--ui-accent)}
+.fmt .nm{font-weight:600}
+.fmt .rf{display:block;color:var(--ui-muted);font-size:12px}
+.opt{display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap}
+.opt select,.opt input[type=number]{background:var(--ui-bg2);border:1px solid var(--ui-line);border-radius:7px;height:32px;padding:0 8px}
+.opt input[type=number]{width:80px}
+.opt small{color:var(--ui-muted);display:block;width:100%}
+#pv{background:var(--desk);border-radius:10px;padding:14px;display:flex;gap:12px;overflow:auto;min-height:220px;align-items:flex-start}
+#pv .pvz{zoom:.3;display:flex;gap:40px}
+#pv .page{margin:0!important}
+.howto{margin-top:18px;background:var(--ui-bg2);border:1px solid var(--ui-line);border-radius:10px;padding:12px 16px;font-size:13px}
+.howto ol{margin:6px 0 0;padding-left:20px}
+.howto li{margin:3px 0}
+.actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+
+/* =====================================================================
+   BOOK PAGES — mechanics only
+   The look and the layout of the pages belong to each book (layout.html +
+   style.css). The engine only gives every page its physical size and keeps
+   the book inside the viewing area.
+   --pw/--ph: trim width/height in mm (unitless)  --bl: bleed in mm
+   --u: 1% of the page width   --b: the bleed as a length
+   ===================================================================== */
+#view,#pv{contain:paint}
+#doc,.pvz{--pw:134;--ph:189.4;--bl:0}
+/* EXPORT:BEGIN — from here to EXPORT:END this file also styles the pages of an EPUB (book_tools.py epub) */
+.page{position:relative;overflow:hidden;contain:strict;box-sizing:border-box;
+  width:calc((var(--pw) + 2*var(--bl))*1mm);height:calc((var(--ph) + 2*var(--bl))*1mm);
+  --u:calc(var(--pw)*.01mm); --b:calc(var(--bl)*1mm);
+  margin:0 auto 10mm;background:#fff;color:#222;box-shadow:0 4px 24px #0008;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page.overflow{outline:3px solid var(--ui-danger);outline-offset:3px}
+
+/* image frames (class "img", filled by the engine) */
+.img{overflow:hidden}
+.img img{width:100%;height:100%;object-fit:contain;display:block}
+.img.missing{background:repeating-linear-gradient(45deg,#ece6dc 0 10px,#e4ddd1 10px 20px);border:2px dashed #a89f90;color:#4a443a;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.6em;gap:.25em;
+  font:normal 400 max(7pt,1em)/1.2 "Segoe UI",Arial,sans-serif;letter-spacing:0;text-transform:none;cursor:default}
+.img.missing.can-drop{cursor:pointer}
+.img.missing.over{border-color:var(--ui-accent);background:#fbe9dd}
+.img.missing .t1{font-weight:800;font-size:1.05em}
+.img.missing .t2{font-family:Consolas,monospace;font-size:.9em;background:#fff;border-radius:.3em;padding:.05em .35em}
+.img.missing .t3{font-size:.82em;opacity:.8}
+.img.missing .ini{display:none}
+.img.missing[data-kind=logo]{border-width:1px;padding:.1em;gap:0}
+.img.missing[data-kind=logo] .ini{display:block;font-family:Georgia,serif;font-size:calc(var(--u)*3.2);font-weight:700;line-height:1}
+.img.missing[data-kind=logo] .t1,.img.missing[data-kind=logo] .t2,.img.missing[data-kind=logo] .t3{display:none}
+
+/* plain fallback, shown only while a book has no layout.html */
+.page[data-fallback]{display:flex;flex-direction:column;padding:calc(var(--b) + var(--u)*7);gap:calc(var(--u)*1.5);font-family:"Segoe UI",Arial,sans-serif}
+.fb-head{font:700 calc(var(--u)*4.5)/1.1 Georgia,serif}
+.fb-sub{color:#666;margin:0}
+.fb-body{flex:1;min-height:0;overflow:hidden;font-size:var(--fs,7pt);border-top:1px solid #ccc;padding-top:calc(var(--u)*1.5)}
+.fb-box{margin:0 0 .8em}
+.fb-box h3{margin:0 0 .2em;font:700 1.1em Georgia,serif}
+.fb-box p,.fb-box ul,.fb-box ol{margin:.2em 0}
+.fb-img{position:relative;height:calc(var(--u)*40)}
+.fb-img .img,.page[data-fallback] .inline-img .img{position:absolute;inset:0}
+.page[data-fallback] .inline-img{position:relative;height:8em;margin:.3em 0}
+.fb-foot{text-align:right;color:#666}
+.fb-opener{display:flex;flex-direction:column;gap:calc(var(--u)*2);font-size:calc(var(--u)*2.4)}
+.fb-opener h1{margin:0;font:700 calc(var(--u)*8)/1.05 Georgia,serif}
+
+/* EXPORT:END */
+mark.hit{background:#ffe066;color:inherit;border-radius:2px}
+mark.hit.cur{background:#ff9f1a;box-shadow:0 0 0 2px #ff9f1a}
+
+/* ---------- print ---------- */
+@media print{
+  html,body{background:none!important;overflow:visible!important;height:auto!important}
+  #bar,#toc,#probs,#status,.overlay{display:none!important}
+  #view{position:static!important;overflow:visible!important}
+  #doc{zoom:1!important;padding:0!important;margin:0!important;width:auto!important}
+  .page{margin:0!important;box-shadow:none!important;outline:none!important;break-after:page;page-break-after:always}
+  .page:last-of-type{break-after:auto;page-break-after:auto}
+  .page.skip{display:none!important}
+  mark.hit{background:none!important;box-shadow:none!important}
+  .img.missing{border-style:solid}
+}
+.card pre.code{background:#000;padding:10px;border-radius:8px;white-space:pre-wrap;font-size:12px}
+
+/* ---------- app mode (site viewer) ---------- */
+body.dropping #view{outline:3px dashed var(--ui-accent);outline-offset:-14px}
+.card a{color:var(--ui-accent)}
+#sp-drop .btn{margin:4px}
+/* settings gear and its popover */
+.setwrap{position:relative;flex:none}
+.setpop{position:absolute;top:calc(100% + 8px);right:0;z-index:30;min-width:200px;background:var(--ui-bg);border:1px solid var(--ui-line);border-radius:10px;box-shadow:0 12px 32px #0009;padding:12px 14px}
+.setpop::before{content:"";position:absolute;top:-6px;right:12px;width:10px;height:10px;background:var(--ui-bg);border-left:1px solid var(--ui-line);border-top:1px solid var(--ui-line);transform:rotate(45deg)}
+.setrow{display:flex;align-items:center;gap:8px}
+.setlbl{flex:1;color:var(--ui-muted);font-size:13px}
+.chip{height:28px;min-width:42px;padding:0 12px;border-radius:14px;border:1px solid var(--ui-line);background:var(--ui-bg2);font-size:12px;font-weight:700;letter-spacing:.05em}
+.chip:hover{border-color:var(--ui-muted)}
+.chip.on{background:var(--ui-accent);border-color:var(--ui-accent);color:#04201d}
+@media (max-width:760px){ .field.search,#zoomval,#bar .sep,#bar .title{display:none} #bar{gap:2px;padding:0 6px} }
+@media (max-width:600px){ .tb.primary .lbl,#b-zout,#b-zin{display:none} #bar{overflow-x:auto} }
+@media (max-width:600px){ .setpop{position:fixed;top:52px;right:8px} .setpop::before{display:none} }
+.fmt-def{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:9px;background:var(--ui-accent);color:#04201d;font-size:11px;font-weight:700;vertical-align:1px}

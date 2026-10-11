@@ -1,0 +1,22 @@
+# iareader
+
+> A static site that lays out, previews and prints books written by AI agents. The agent writes data.md (content), layout.html and style.css (the book's own layout and look) and images; the user opens them in the site's viewer. Nothing is uploaded.
+
+## Instructions for agents
+
+- Authors are usually not technical and arrive with just an idea. Lead them (AGENTS.md section 0): interview in short rounds with a suggested answer for each question, get the plan and the outline approved, deliver a sample page, then write chapter by chapter. Never write the whole book in your first reply. The author's own guidance wins over this.
+- Use the author's language, whatever it is, for the conversation and the book. Never ask them to pick English or Portuguese: the `language` key only sets two printed labels (AGENTS.md section 3.3 explains other languages).
+- [AGENTS.md](agents.md): the complete format and rules. Read it fully before writing anything.
+- [book_tools.py](tools/book_tools.py): optional Python checker (validate, list, show, replace, append, images, fix, migrate).
+- [New book template](downloads/new-book.zip): data.md, layout.html, style.css and images/ to start from.
+
+## Reference book (follow it exactly)
+
+- [The Art of Lorem Ipsum — file list](samples/the-art-of-lorem-ipsum-en/README.md): data.md, layout.html, style.css and every image with its role.
+- [data.md](samples/the-art-of-lorem-ipsum-en/data.md) · [layout.html](samples/the-art-of-lorem-ipsum-en/layout.html) · [style.css](samples/the-art-of-lorem-ipsum-en/style.css)
+- [Everything in one zip](downloads/the-art-of-lorem-ipsum-en.zip)
+
+## For the author
+
+- [Viewer](app/): open the files, a zip or the book folder to preview and print.
+- Sample: [The Art of Lorem Ipsum](app/?sample=en)

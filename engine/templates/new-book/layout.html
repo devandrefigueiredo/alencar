@@ -1,0 +1,82 @@
+<!-- BOOK LAYOUT: DO NOT DELETE THE FIRST 3 OR THE LAST 3 LINES
+layout(function(){/*
+-->
+<!--
+  THIS BOOK'S LAYOUT
+  One <template id="..."> per kind of page or box. The engine fills them with
+  the content of data.md; style.css (same folder) styles them. Nothing about
+  the layout lives in the engine: change, move or remove anything here.
+
+  Default templates:  page (content pages), opener (chapter openers),
+                      box (text and cards boxes), image-box (type: image).
+  Any other id is a template you can pick in data.md with "layout: <id>"
+  on a chapter (opener), a page or a box.
+
+  {{name}}             a value: book.title, book.author, book.footer,
+                       chapter.num / title / subtitle / label,
+                       page.num / title / subtitle / lede / number / side,
+                       box.title / icon / color / type / caption / class,
+                       label.chapter, label.inChapter
+  data-if="name"       keep this element only if the value is not empty
+                       (data-if="!name": only if it is empty)
+  data-each="name"     repeat this element for each item of a list:
+                       chapter.pages ({{item.num}}, {{item.title}}, {{item.page}})
+                       chapter.tags ({{item.text}})
+  data-slot="name"     the engine fills this element:
+                       page: boxes, logo · opener: image, intro · box: icon, body, image
+  data-image="images/ornament.png"   a fixed image of the book
+  data-fit="--v MIN MAX [shrink%]"   the engine picks the biggest --v that
+                       makes the content fit in this element (pt, or u = 1%
+                       of the page width). Use --v in style.css.
+  Allowed: plain HTML (div, span, section, header, footer, h1-h6, p, ul, li...)
+  and simple SVG. No scripts, links, forms, ids or url(). Never write the two
+  characters "star slash" in this file.
+-->
+
+<template id="page">
+  <header class="rh"><span>{{chapter.label}}<span data-if="chapter.label"><span data-if="chapter.title"> · </span></span>{{chapter.title}}</span><span>{{book.title}}</span></header>
+  <div class="ttl">
+    <div class="ttl-tx" data-fit="--hs 2u 5.6u 4%">
+      <div class="ttl-num" data-if="page.num">{{page.num}}</div>
+      <h2>{{page.title}}</h2>
+      <p data-if="page.subtitle">{{page.subtitle}}</p>
+    </div>
+    <div class="ttl-logo" data-if="page.logo"><div data-slot="logo"></div></div>
+  </div>
+  <p class="lede" data-if="page.lede">{{page.lede}}</p>
+  <div class="pb" data-fit="--fs 4.5pt 13pt"><div class="grid" data-slot="boxes"></div></div>
+  <footer class="folio"><b>{{page.number}}</b><span>{{book.footer}}</span></footer>
+</template>
+
+<template id="opener">
+  <div class="cv-band"><div class="cv-lbl">{{label.chapter}}</div><div class="cv-n">{{chapter.num}}</div></div>
+  <div class="cv-main">
+    <div class="cv-tt" data-fit="--cs 3u 9u 4%"><h1>{{chapter.title}}</h1><p data-if="chapter.subtitle">{{chapter.subtitle}}</p></div>
+    <div class="cv-intro" data-if="chapter.intro" data-slot="intro"></div>
+    <div class="cv-img"><div data-if="chapter.image" data-slot="image"></div></div>
+    <div class="cv-toc" data-if="chapter.pages">
+      <h3>{{label.inChapter}}</h3>
+      <div class="r" data-each="chapter.pages"><span class="n">{{item.num}}</span><span class="t">{{item.title}}</span><span class="dots"></span><span class="p">{{item.page}}</span></div>
+    </div>
+    <div class="cv-tags" data-if="chapter.tags"><span data-each="chapter.tags">{{item.text}}</span></div>
+    <div class="cv-author" data-if="book.author">{{book.author}}</div>
+  </div>
+</template>
+
+<template id="box">
+  <section class="box {{box.class}}">
+    <div class="box-h" data-if="box.title"><div class="box-ic {{box.color}}" data-slot="icon"></div><div class="box-t">{{box.title}}</div></div>
+    <div class="box-b" data-slot="body"></div>
+  </section>
+</template>
+
+<template id="image-box">
+  <section class="box imgbox {{box.class}}">
+    <div data-slot="image"></div>
+    <div class="cap" data-if="box.caption">{{box.caption}}</div>
+  </section>
+</template>
+
+<!--
+*/});
+-->

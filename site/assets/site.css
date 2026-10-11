@@ -1,0 +1,39 @@
+/* iareader site: the agents page */
+:root{
+  --bg:#faf7f2; --fg:#1d1d1d; --muted:#5b5549; --rule:#e4dccd; --card:#ffffff;
+  --primary:#0f766e; --primary-fg:#ffffff; --accent:#c2410c; --code:#f1ece3;
+  --serif:Georgia,Cambria,"Times New Roman",serif; --sans:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#1b1d22; --fg:#f0ebe2; --muted:#b8b0a3; --rule:#343842; --card:#23262d; --primary:#2bb3a3; --primary-fg:#04201d; --accent:#e46a35; --code:#262a31}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 var(--sans)}
+a{color:var(--primary)}
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--rule)}
+.brand{font:700 22px/1 var(--serif);color:var(--fg);text-decoration:none;letter-spacing:-.01em}
+.top nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.top nav a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;font-size:15px}
+.top nav a.on,.top nav a:hover{color:var(--fg);background:var(--code)}
+h1,h2,h3{font-family:var(--serif);line-height:1.12;letter-spacing:-.01em}
+.foot{max-width:1040px;margin:0 auto;padding:24px;color:var(--muted);font-size:14px;border-top:1px solid var(--rule)}
+/* agents page */
+.doc{max-width:860px;margin:0 auto;padding:32px 24px 64px}
+.doc .note{background:var(--code);border-left:4px solid var(--accent);padding:12px 16px;border-radius:4px}
+.doc h1,.doc h2,.doc h3{font-family:var(--serif);line-height:1.15;letter-spacing:-.01em}
+.doc h1{font-size:clamp(30px,5vw,44px);max-width:none}
+.doc h2{font-size:28px;margin-top:1.6em;padding-top:.4em;border-top:1px solid var(--rule)}
+.doc h3{font-size:20px;margin-top:1.4em}
+.doc pre{background:var(--code);border:1px solid var(--rule);border-radius:8px;padding:14px;overflow-x:auto;font:13.5px/1.5 Consolas,"Courier New",monospace}
+.doc code{background:var(--code);border-radius:4px;padding:.05em .3em;font:.9em Consolas,"Courier New",monospace}
+.doc pre code{background:none;padding:0;font:inherit}
+.doc .tbl{overflow-x:auto}
+.doc table{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0}
+.doc th,.doc td{border:1px solid var(--rule);padding:6px 9px;text-align:left;vertical-align:top}
+.doc th{background:var(--code)}
+@media (max-width:600px){
+  .top{padding:10px 16px;flex-wrap:wrap;gap:8px}
+  .top nav a{padding:6px 8px;font-size:14px}
+  .doc{padding-left:16px;padding-right:16px}
+}

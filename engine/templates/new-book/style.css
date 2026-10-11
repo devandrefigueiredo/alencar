@@ -1,0 +1,228 @@
+/* =====================================================================
+   THIS BOOK'S STYLE
+   The look AND the layout of this book. The engine only fills the templates
+   of layout.html with the content of data.md; everything you see on a page
+   is decided here and in layout.html.
+
+   Rules (the viewer ignores anything else):
+   - every selector starts at the book: ".book ..." or ".theme-NAME ...";
+   - no url(), @import or expression() (images come from data.md or from
+     data-image in layout.html);
+   - colors as #rrggbb, transparent or rgba().
+
+   Sections:
+     1. Colors, fonts and measures (the easy knobs)
+     2-3. Dark and light themes (theme: dark | light in data.md)
+     4. Page frame        5. Running head and title    6. Box grid
+     7. Boxes             8. Box content               9. Cards and images
+     10. Footer           11. Chapter opener
+   ===================================================================== */
+
+/* ---------- 1. GENERAL COLORS AND SIZES ---------- */
+.book {
+  /* Main colors */
+  --color-primary: #0f766e;          /* icons, links, side band of the chapter opener */
+  --color-primary-dark: #115e59;     /* darker shade of the primary color */
+  --color-accent: #c2410c;           /* list markers, lede rule, numbers */
+  --color-accent-dark: #9a3412;      /* darker shade of the accent color */
+
+  /* Fonts (the first one available is used). For a font that is not installed everywhere, put its file in
+     fonts/ and declare it with @font-face, e.g.
+     @font-face { font-family: "Literata"; src: url("fonts/literata-regular.woff2") format("woff2"); } */
+  --font-body: "Segoe UI", Calibri, Roboto, Arial, sans-serif;
+  --font-heading: Georgia, Cambria, "Times New Roman", serif;
+
+  /* Page measures (unitless numbers) */
+  --title-height: 12;        /* height of the page title block, in % of the page height */
+  --footer-height: 4;        /* height of the footer (page number), in % of the page height */
+  --box-gap: 1.2;            /* space between boxes (bigger = further apart) */
+  --radius: 0;               /* box corners (0 = square) */
+  --box-title-size: 1.15;    /* box title, relative to the body text */
+  --icon-size: 1.7;          /* box icon, relative to the body text */
+  --line-height: 1.22;       /* space between lines of text */
+}
+
+/* ---------- 2. DARK THEME COLORS (theme: dark in data.md) ---------- */
+.theme-dark {
+  --page-bg: #1b1d22;
+  --title-bg: transparent;
+  --title-color: #f5f1ea;          /* page title */
+  --muted-color: #c9c2b6;          /* subtitle, lede and running head */
+  --footer-bg: #1b1d22;
+  --footer-color: #d8d2c7;
+  --box-bg: transparent;           /* box background ("transparent" = none) */
+  --rule-color: #3d424c;           /* line above each box */
+  --box-shadow: none;              /* shadow around boxes */
+  --text-color: #e6e1d8;
+  --box-title-color: #5ec4b6;
+  --bold-color: #ffffff;
+  --card-bg: transparent;          /* results strip (type: cards) */
+  --card-color: #e6e1d8;
+  --card-border: #3d424c;
+  --quote-bg: rgba(194, 65, 12, .16);   /* highlighted quote (lines starting with >) */
+  --quote-border: #7a3a1c;
+  --opener-bg: #1b1d22;            /* chapter opener page */
+  --opener-color: #f5f1ea;         /* chapter opener text */
+}
+
+/* ---------- 3. LIGHT THEME COLORS (theme: light in data.md) ---------- */
+.theme-light {
+  --page-bg: #faf7f2;
+  --title-bg: transparent;
+  --title-color: #1d1d1d;
+  --muted-color: #5b5549;
+  --footer-bg: #faf7f2;
+  --footer-color: #5b5549;
+  --box-bg: transparent;
+  --rule-color: #d9d0c0;
+  --box-shadow: none;
+  --text-color: #2b2b2b;
+  --box-title-color: #0f766e;
+  --bold-color: #1d1d1d;
+  --card-bg: transparent;
+  --card-color: #2b2b2b;
+  --card-border: #d9d0c0;
+  --quote-bg: #fbe9dd;
+  --quote-border: #efc4a8;
+  --opener-bg: #faf7f2;
+  --opener-color: #1d1d1d;
+}
+
+/* ---------- 4. PAGE FRAME ----------
+   The engine sizes each page (.page) and gives --u = 1% of the page width
+   and --b = the bleed. Pages are column flexboxes here; change at will. */
+.book .page {
+  display: flex; flex-direction: column;
+  background: var(--page-bg); color: var(--text-color);
+  font-family: var(--font-body);
+}
+
+/* ---------- 5. RUNNING HEAD AND TITLE BLOCK ---------- */
+.book .rh {
+  flex: none; display: flex; justify-content: space-between; gap: calc(var(--u)*2); align-items: flex-end;
+  padding: calc(var(--b) + var(--u)*2.2) calc(var(--b) + var(--u)*5) calc(var(--u)*.8);
+  font-size: calc(var(--u)*1.55); letter-spacing: .14em; text-transform: uppercase; color: var(--muted-color);
+  border-bottom: 1px solid var(--rule-color); white-space: nowrap; overflow: hidden;
+}
+.book .rh span { overflow: hidden; text-overflow: ellipsis; }
+
+.book .ttl {
+  flex: none; height: calc(var(--ph)*var(--title-height)*.01mm); display: flex; gap: calc(var(--u)*3); align-items: stretch;
+  padding: calc(var(--u)*2) calc(var(--b) + var(--u)*5) 0; background: var(--title-bg); color: var(--title-color);
+}
+/* --hs (title size) is fitted by the engine: data-fit="--hs 2u 5.6u 4%" in layout.html */
+.book .ttl-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: safe flex-end; overflow: hidden; --hs: calc(var(--u)*5.6); }
+.book .ttl-num { font-family: var(--font-body); font-weight: 700; font-size: calc(var(--hs)*.34); letter-spacing: .2em; color: var(--color-accent); margin-bottom: .25em; }
+.book .ttl-tx h2 { margin: 0; font-family: var(--font-heading); font-weight: 700; font-size: var(--hs); line-height: 1; letter-spacing: -.015em; }
+.book .ttl-tx p { margin: .3em 0 0; font-family: var(--font-heading); font-style: italic; font-size: calc(var(--hs)*.4); line-height: 1.2; color: var(--muted-color); }
+.book .ttl-logo {
+  flex: none; align-self: flex-end; height: 72%; aspect-ratio: 1/1; border-radius: 50%; overflow: hidden; position: relative; background: #fff;
+  box-shadow: 0 0 0 calc(var(--u)*.25) var(--rule-color);
+}
+.book .ttl-logo .img { position: absolute; inset: 0; }
+
+.book .lede {
+  flex: none; margin: calc(var(--u)*1.6) calc(var(--b) + var(--u)*5) 0; padding-bottom: calc(var(--u)*1.4);
+  font-family: var(--font-heading); font-size: calc(var(--u)*2.05); line-height: 1.35; color: var(--muted-color);
+  border-bottom: calc(var(--u)*.3) solid var(--color-accent); max-height: calc(var(--u)*10); overflow: hidden;
+}
+
+/* ---------- 6. BOX GRID ----------
+   --fs (text size) is fitted by the engine: data-fit="--fs 4.5pt 13pt" on .pb.
+   Each box gets --span (columns, from "width:" in data.md), --rows ("height:")
+   and, when it has "area:", --area and data-area. */
+.book .pb { flex: 1; min-height: 0; padding: calc(var(--u)*1.8) calc(var(--b) + var(--u)*5) calc(var(--u)*1.2); overflow: hidden; font-size: var(--fs, 7pt); }
+.book .grid {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-content: start;
+  column-gap: calc(var(--u)*var(--box-gap)*2.2); row-gap: calc(var(--u)*var(--box-gap)*1.4);
+}
+.book .grid > * { grid-column: span var(--span, 4); grid-row: span var(--rows, 1); }
+.book .grid > [data-area] { grid-area: var(--area); }
+
+/* ---------- 7. BOXES ---------- */
+.book .box {
+  background: var(--box-bg); border-top: calc(var(--u)*.2) solid var(--rule-color);
+  border-radius: 0 0 calc(var(--u)*var(--radius)) calc(var(--u)*var(--radius)); box-shadow: var(--box-shadow);
+  padding: .55em 0 .2em; min-width: 0; display: flex; flex-direction: column; overflow-wrap: anywhere; position: relative;
+}
+.book .box-h { display: flex; align-items: baseline; gap: .4em; margin-bottom: .3em; flex: none; }
+.book .box-ic { flex: none; width: calc(var(--icon-size)*.68em); height: calc(var(--icon-size)*.68em); display: grid; place-items: center; align-self: center; color: var(--color-primary); }
+.book .box-ic.accent { color: var(--color-accent); }
+.book .box-ic.green { color: #4d7c0f; }
+.book .box-ic.red { color: #b91c1c; }
+.book .box-ic.purple { color: #6d28d9; }
+.book .box-ic svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.book .box-t { font-family: var(--font-heading); font-weight: 700; color: var(--box-title-color); font-size: calc(var(--box-title-size)*1em); line-height: 1.1; }
+.book .box-b { display: contents; }
+
+/* ---------- 8. BOX CONTENT (what the engine makes from data.md text) ---------- */
+.book .box p { margin: .2em 0; line-height: var(--line-height); }
+.book .box h4 { margin: .4em 0 .15em; font-size: 1em; letter-spacing: .08em; text-transform: uppercase; color: var(--box-title-color); }
+.book .box strong { color: var(--bold-color); font-weight: 700; }
+.book .box ul, .book .box ol { list-style: none; margin: .1em 0; padding: 0; }
+.book .box li { position: relative; padding-left: 1.1em; margin: .16em 0; line-height: calc(var(--line-height) - .02); break-inside: avoid; }
+.book .box ul li::before { content: "–"; position: absolute; left: 0; top: 0; color: var(--color-accent); font-weight: 700; }
+.book .box ol { counter-reset: n; }
+.book .box ol li { padding-left: 1.7em; }
+.book .box ol li::before { counter-increment: n; content: counter(n, decimal-leading-zero); position: absolute; left: 0; top: 0; font-family: var(--font-heading); font-weight: 700; color: var(--color-accent); }
+.book .box .cols2 { columns: 2; column-gap: 1.6em; }
+.book .box .cols3 { columns: 3; column-gap: 1.3em; }
+.book .callout { position: relative; background: var(--quote-bg); border: 0; padding: .35em .6em .35em 1.7em; margin: .4em 0; font-family: var(--font-heading); font-style: italic; line-height: 1.25; }
+.book .callout::before { content: "\201C"; position: absolute; left: .15em; top: -.12em; font-size: 2.4em; line-height: 1; color: var(--color-accent); font-style: normal; }
+.book .callout strong { font-style: normal; }
+.book .callout p { margin: .15em 0; }
+.book .linkbtn { display: inline-block; align-self: flex-start; color: var(--color-primary) !important; border-bottom: .12em solid var(--color-primary); padding: 0 0 .05em; margin: .35em 0; font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
+.book .box a { color: inherit; }
+.book .box code { font-family: Consolas, "Courier New", monospace; background: var(--quote-bg); border-radius: .2em; padding: 0 .2em; font-size: .95em; }
+.book .box hr { border: 0; border-top: 1px solid var(--rule-color); margin: .4em 0; }
+.book .inline-img { position: relative; height: 8em; margin: .3em 0; }
+.book .inline-img .img { position: absolute; inset: 0; }
+
+/* ---------- 9. CARDS STRIP (type: cards) AND IMAGE BOXES ---------- */
+.book .cards { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 0; flex: 1; margin-top: .2em; }
+.book .cardi { background: var(--card-bg); color: var(--card-color); border-left: 1px solid var(--card-border); padding: .2em .8em .3em; display: flex; flex-direction: column; gap: .35em; line-height: 1.2; }
+.book .cardi:first-child { border-left: 0; padding-left: 0; }
+.book .cardi svg { flex: none; width: 1.6em; height: 1.6em; fill: none; stroke: var(--color-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.book .cardi strong { color: inherit; font-family: var(--font-heading); font-size: 1.15em; }
+
+.book .imgbox { padding: 0; min-height: calc(var(--ph)*.1mm); background: transparent; border-top: 0; box-shadow: none; }
+.book .imgbox .img { position: absolute; inset: 0; border-radius: calc(var(--u)*.3); }
+.book .imgbox .img:not(:last-child) { bottom: 1.8em; }   /* followed by the caption */
+.book .imgbox .cap { position: absolute; left: 0; right: 0; bottom: .2em; font-family: var(--font-heading); font-style: italic; font-size: .9em; color: var(--muted-color); }
+
+/* ---------- 10. FOOTER (page number on the outer corner) ---------- */
+.book .folio {
+  flex: none; height: calc(var(--ph)*var(--footer-height)*.01mm + var(--b)); padding: 0 calc(var(--b) + var(--u)*5) var(--b);
+  background: var(--footer-bg); color: var(--footer-color);
+  display: flex; align-items: center; gap: calc(var(--u)*1.6); font-size: calc(var(--u)*1.5); letter-spacing: .12em; text-transform: uppercase;
+}
+.book .folio b { font-family: var(--font-heading); font-size: calc(var(--u)*2.4); font-weight: 700; letter-spacing: 0; color: var(--color-accent); }
+.book .page.odd .folio { flex-direction: row-reverse; }
+
+/* ---------- 11. CHAPTER OPENER (side band + main column) ---------- */
+.book .page[data-layout="opener"] { background: var(--opener-bg); color: var(--opener-color); flex-direction: row; }
+.book .cv-band {
+  flex: none; width: 28%; background: var(--color-primary); color: #fff; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: calc(var(--b) + var(--u)*5) calc(var(--u)*3) calc(var(--b) + var(--u)*6) calc(var(--b) + var(--u)*3);
+}
+.book .cv-lbl { font-size: calc(var(--u)*1.8); letter-spacing: .3em; text-transform: uppercase; font-weight: 700; opacity: .85; }
+.book .cv-n { font-family: var(--font-heading); font-weight: 700; font-size: calc(var(--u)*20); line-height: .9; margin-top: calc(var(--u)*.6); }
+.book .cv-main { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: calc(var(--b) + var(--u)*7) calc(var(--b) + var(--u)*5) calc(var(--b) + var(--u)*4) calc(var(--u)*5); }
+/* --cs (chapter title size) is fitted by the engine: data-fit="--cs 3u 9u 4%" */
+.book .cv-tt { flex: none; height: calc(var(--ph)*.2mm); display: flex; flex-direction: column; justify-content: safe flex-end; overflow: hidden; --cs: calc(var(--u)*9); }
+.book .cv-tt h1 { margin: 0; font-family: var(--font-heading); font-weight: 700; font-size: var(--cs); line-height: 1; letter-spacing: -.02em; }
+.book .cv-tt p { margin: .45em 0 0; font-family: var(--font-heading); font-style: italic; font-size: calc(var(--cs)*.3); line-height: 1.25; opacity: .8; }
+.book .cv-intro { font-size: calc(var(--u)*2); margin-top: calc(var(--u)*2); }
+.book .cv-img { flex: 1; min-height: 0; margin: calc(var(--u)*3) 0; position: relative; }
+.book .cv-img .img { position: absolute; inset: 0; border-radius: calc(var(--u)*.3); }
+.book .cv-img .img img { object-fit: cover; }
+.book .cv-toc { flex: none; font-size: calc(var(--u)*1.9); }
+.book .cv-toc h3 { margin: 0 0 calc(var(--u)*.8); font-size: calc(var(--u)*1.5); letter-spacing: .25em; text-transform: uppercase; color: var(--color-accent); }
+.book .cv-toc .r { display: flex; align-items: baseline; gap: calc(var(--u)*1.2); padding: calc(var(--u)*.55) 0; border-top: 1px solid var(--rule-color); }
+.book .cv-toc .n { flex: none; min-width: calc(var(--u)*5); font-weight: 700; color: var(--color-accent); }
+.book .cv-toc .t { font-family: var(--font-heading); }
+.book .cv-toc .dots { flex: 1; border-bottom: 1px dotted currentColor; opacity: .35; transform: translateY(-.25em); }
+.book .cv-toc .p { flex: none; font-variant-numeric: tabular-nums; opacity: .8; }
+.book .cv-tags { flex: none; margin-top: calc(var(--u)*2.4); font-size: calc(var(--u)*1.7); letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.book .cv-tags span + span::before { content: "·"; margin: 0 .7em; color: var(--color-accent); }
+.book .cv-author { flex: none; margin-top: calc(var(--u)*1.2); font-size: calc(var(--u)*1.7); letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
