@@ -9,7 +9,6 @@
 - [AGENTS.md](agents.md): the complete format and rules. Read it fully before writing anything.
 - [book_tools.py](tools/book_tools.py): optional Python checker (validate, list, show, replace, append, images, fix, migrate).
 - [New book template](downloads/new-book.zip): data.md, layout.html, style.css and images/ to start from.
-- [Kit](downloads/kit.zip): the repository in one zip (AGENTS.md, engine with the tool, reference book). If your code sandbox has no internet, ask the author to attach it once instead of retrying (AGENTS.md, "When your sandbox has no internet").
 
 ## Reference book (follow it exactly)
 

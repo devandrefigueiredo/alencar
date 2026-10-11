@@ -16,23 +16,23 @@ about astronomy") and expect you to lead. Section 0 says how. Read it first.
 
 ## Reference book — read it before you write anything
 
-This site publishes a complete reference book, "The Art of Lorem Ipsum". It is **the pattern every delivery must
+The repository holds a complete reference book, "The Art of Lorem Ipsum". It is **the pattern every delivery must
 follow**: the same files, the same structure, the same conventions. Its body text is placeholder (lorem ipsum); its
 structure, headings, layout, look, image names and fullness are exactly what a finished book must have.
 
-Paths are relative to the address you read this file from (for example `https://<site>/agents.md` →
-`https://<site>/samples/the-art-of-lorem-ipsum-en/data.md`).
+The reference lives in the repository (https://github.com/devandrefigueiredo/alencar), in `books/the-art-of-lorem-ipsum-en/`. With the
+repository on disk (cloned, or its zip unpacked), read the files there; otherwise open them in a browser.
 
-| What | Path |
-|---|---|
-| Book content | `samples/the-art-of-lorem-ipsum-en/data.md` |
-| Layout (templates) | `samples/the-art-of-lorem-ipsum-en/layout.html` |
-| Look | `samples/the-art-of-lorem-ipsum-en/style.css` |
-| File list: every image with its name, size and role | `samples/the-art-of-lorem-ipsum-en/README.md` |
-| Everything in one zip | `downloads/the-art-of-lorem-ipsum-en.zip` |
+| What | In the repository | In a browser |
+|---|---|---|
+| Book content | `books/the-art-of-lorem-ipsum-en/data.md` | https://github.com/devandrefigueiredo/alencar/blob/main/books/the-art-of-lorem-ipsum-en/data.md |
+| Layout (templates) | `books/the-art-of-lorem-ipsum-en/layout.html` | https://github.com/devandrefigueiredo/alencar/blob/main/books/the-art-of-lorem-ipsum-en/layout.html |
+| Look | `books/the-art-of-lorem-ipsum-en/style.css` | https://github.com/devandrefigueiredo/alencar/blob/main/books/the-art-of-lorem-ipsum-en/style.css |
+| Images: names, sizes and roles | `python engine/tools/book_tools.py images books/the-art-of-lorem-ipsum-en/data.md` | https://github.com/devandrefigueiredo/alencar/blob/main/books/the-art-of-lorem-ipsum-en/images |
+| Everything in one zip | the repository zip | https://github.com/devandrefigueiredo/alencar/archive/refs/heads/main.zip |
 
 **Before your first delivery, read `data.md`, `layout.html` and `style.css` of the reference in full.** If you
-cannot open links, ask the author to download the zip from the site and attach it to the chat.
+cannot open links, ask the author to download the repository zip and attach it to the chat.
 
 ### When your sandbox has no internet
 
@@ -44,7 +44,7 @@ built, not a passing failure, and the repository being public does not change it
 |---|---|
 | Test once | One failed clone or download is enough. Do not retry, and do not ask the author to connect accounts or change settings. |
 | Read by browsing | Your browser still works: read this file, the reference book, and check facts and image licenses on the web from there. |
-| Ask for the kit, once | In one short message, give the author the link and the steps: "Open https://github.com/devandrefigueiredo/alencar/archive/refs/heads/main.zip in your browser; it downloads `alencar-main.zip`. Attach that file here, without unzipping it." (Same thing by hand: the repository page, green **Code** button, **Download ZIP**.) It is the whole repository, always current, so every command in this file works after you unzip it. If you read this file from a site that publishes `downloads/kit.zip`, that smaller zip works too. If the author said to stop when the files cannot be obtained, this message is that stop; also offer to go on without the kit (the "No Python" path in section 6). Otherwise keep working while you wait (rule 16). |
+| Ask for the kit, once | In one short message, give the author the link and the steps: "Open https://github.com/devandrefigueiredo/alencar/archive/refs/heads/main.zip in your browser; it downloads `alencar-main.zip`. Attach that file here, without unzipping it." (Same thing by hand: the repository page, green **Code** button, **Download ZIP**.) It is the whole repository, always current, so every command in this file works after you unzip it. If the author said to stop when the files cannot be obtained, this message is that stop; also offer to go on without the kit (the "No Python" path in section 6). Otherwise keep working while you wait (rule 16). |
 | Ask for known photos in the same message | The sandbox cannot download images either. Photos the author already named (links in their request) go in that same message: one line per photo, the link to download and the file name to attach it as. Photos you choose later (option B, section 5) go in the missing-image list when the text is done ("When you cannot get an image", section 5), never one at a time. Never deliver a photo you did not actually get. |
 | Treat the attached zip as the received kit | Unzip it (e.g. into `/mnt/data/alencar/`) and work there exactly as a coding agent would (section 6). |
 | Say what you could not run | `pdf` and `epub` need a browser inside the sandbox (Task H). If there is none, say so in the final reply. |
@@ -193,8 +193,8 @@ A `data.md` must have at least one chapter (the tool rejects it otherwise), so t
 - **Lost author.** If a reply shows the author did not follow, explain again in simpler words with an example. Do not
   repeat the same text.
 - **Long conversations.** When the book has many chapters or the author will continue later, deliver the current
-  files and give them a short message to paste in a new chat, e.g.: "Read <site>/agents.md and continue my book.
-  book.zip is attached; the plan is inside data.md." (`<site>` is the address you read this file from.)
+  files and give them a short message to paste in a new chat, e.g.: "Read https://github.com/devandrefigueiredo/alencar and follow agent/AGENTS.md to continue
+  my book. book.zip is attached; the plan is inside data.md."
 
 ---
 
@@ -664,7 +664,7 @@ file if the tool does not find it). `pdf --cmyk` also needs Ghostscript (`BOOK_G
 `validate` rejects or where the viewer finds errors (overflowing text, broken layout); `--force` exports anyway, only
 when the author asks for a draft.
 
-A new book starts from the template: `/downloads/new-book.zip` on the site, or `engine/templates/new-book/` in
+A new book starts from the template: `engine/templates/new-book/` in
 the repository (`data.md`, `layout.html`, `style.css`, `images/`).
 
 `replace` and `append` write only if the result is valid, and keep a `.bak` backup.

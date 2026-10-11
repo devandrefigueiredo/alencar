@@ -55,8 +55,8 @@ The toolbar at the top:
 
 ## 2. Working with an AI
 
-1. Tell your AI: "Read <site>/agents.md and help me write a book about …". The site's home page is written for the
-   AI: it explains the format and points to the reference book the AI must follow. If your AI cannot open links, attach `agent/AGENTS.md` (and, if it can run Python,
+1. Tell your AI: "Read https://github.com/devandrefigueiredo/alencar and follow agent/AGENTS.md to help me write a book about …". That file is written
+   for the AI: it explains the format and points to the reference book the AI must follow. If your AI cannot open links, attach `agent/AGENTS.md` (and, if it can run Python,
    `engine/tools/book_tools.py`). Some AIs (ChatGPT, for one) can read the web but cannot download into the place
    where they run code; for them, download https://github.com/devandrefigueiredo/alencar/archive/refs/heads/main.zip
    (this whole folder in one zip) and attach it from the start.
