@@ -1,8 +1,7 @@
 name: Deploy site to GitHub Pages
 
+# Manual only: the project ships as a repository; run this workflow by hand to publish the site.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
