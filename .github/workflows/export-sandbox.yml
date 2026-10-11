@@ -18,6 +18,7 @@ jobs:
       - name: Install Chromium
         run: apt-get update -qq && apt-get install -y -qq chromium fonts-dejavu-core > /dev/null && chromium --version
       - name: Export the reference book
+        shell: bash
         run: |
           set -x
           python engine/tools/book_tools.py name books/the-art-of-lorem-ipsum-en/data.md
