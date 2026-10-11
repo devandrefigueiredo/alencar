@@ -72,6 +72,7 @@ The toolbar at the top:
    - "Put the page title at the bottom and the boxes in two columns." / "Design a new chapter opener."
    - "Generate the missing images."
 4. The AI gives you files to download (ideally one zip with `data.md`, `layout.html`, `style.css` and `images/`).
+   When the book is finished and the AI can run the tool, it also gives you the book's PDF.
 5. Open them in the viewer (or save them into the book folder you opened there).
 6. If **Problems** shows something, click **Copy for AI** and paste it into the chat. The AI fixes it.
 
