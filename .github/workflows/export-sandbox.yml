@@ -19,14 +19,19 @@ jobs:
           sudo runsc install && sudo systemctl reload docker
       - name: Build an image with Chromium
         run: |
-          printf 'FROM python:3.11-bookworm\nRUN apt-get update -qq && apt-get install -y -qq chromium fonts-dejavu-core >/dev/null && useradd -m sandbox\n' > Dockerfile.sandbox
+          printf 'FROM python:3.11-bookworm\nRUN apt-get update -qq && apt-get install -y -qq chromium procps fonts-dejavu-core >/dev/null && useradd -m sandbox\n' > Dockerfile.sandbox
           docker build -q -t sandbox -f Dockerfile.sandbox .
       - name: Export under gVisor, root
         run: |
           docker run --rm --runtime=runsc --network none -v "$PWD:/w" -w /w sandbox bash -c '
-            chromium --version
-            time timeout 300 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/ref.pdf' || true
+            time python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/x_chapter2.pdf --chapter 2'
       - name: Export under gVisor, non-root
         run: |
           docker run --rm --runtime=runsc --network none -u sandbox -v "$PWD:/w" -w /w sandbox bash -c '
-            time timeout 300 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/ref.pdf' || true
+            time python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/x.pdf'
+      - name: A hung browser is stopped with its children
+        run: |
+          printf '#!/bin/bash\nsleep 1000 &\nsleep 1000\n' > /tmp/hang.sh && chmod +x /tmp/hang.sh
+          docker run --rm --runtime=runsc --network none -v "$PWD:/w" -v /tmp/hang.sh:/hang.sh -w /w -e BOOK_BROWSER=/hang.sh -e BOOK_BROWSER_TIMEOUT=10 sandbox bash -c '
+            time python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md /tmp/x.pdf; echo "exit $?"
+            echo "sleep processes left: $(pgrep -c sleep || true)"'
