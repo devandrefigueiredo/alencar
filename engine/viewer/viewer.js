@@ -2381,9 +2381,13 @@ function exportReport() {
     const k = state.pages.findIndex(p => p.ch === ch);
     if (k >= 0) rep.toc.push({title: [ch.num, ch.title].filter(Boolean).join(". ") || BL().chapter, page: k});
   }
-  /* part=cover prints only the cover page, part=interior every page but the cover */
-  const part = EXPORT.get("part");
+  /* pages per chapter number, for part=chapter:N */
+  rep.chapters = {};
+  for (const p of state.pages) if (p.ch && !p.ch.front && p.ch.num) rep.chapters[p.ch.num] = (rep.chapters[p.ch.num] || 0) + 1;
+  /* part=cover prints only the cover page, part=interior every page but the cover, part=chapter:N only chapter N */
+  const part = EXPORT.get("part") || "";
   if (part === "cover" || part === "interior") state.pages.forEach((p, k) => p.el.classList.toggle("skip", (k === state.cover) !== (part === "cover")));
+  if (part.startsWith("chapter:")) state.pages.forEach(p => p.el.classList.toggle("skip", !p.ch || p.ch.front || p.ch.num !== part.slice(8)));
   if (EXPORT.get("export") === "epub") {
     const xs = new XMLSerializer();
     for (const p of state.pages) {

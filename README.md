@@ -62,8 +62,8 @@ The toolbar at the top:
    (this whole folder in one zip) and attach it from the start.
    Starting from just an idea is fine: the AI interviews you in short rounds (each question comes with a suggestion;
    reply "ok" to accept), shows you the plan and the chapter list, delivers a sample page, then writes chapter by
-   chapter. Each time it gives you two files: `book.pdf`, to see the result, and `book.zip`, to attach to your next
-   request. The plan is saved inside `data.md` (as a hidden comment), so another chat or AI can continue later.
+   chapter. Each time it gives you a PDF, to see the result (`<title>_sample.pdf`, `<title>_chapter3.pdf`,
+   `<title>.pdf`), and `<title>.zip`, to attach to your next request. The plan is saved inside `data.md` (as a hidden comment), so another chat or AI can continue later.
    The interview approach is adapted from [Matt Pocock's skills](https://github.com/mattpocock/skills) (MIT).
 2. To change an existing book, also attach its current `data.md` (and `layout.html` + `style.css` when the change
    is about the look or the layout).
@@ -115,12 +115,14 @@ An AI that works in this folder (a coding agent) makes the final files itself an
 going. You can also run the commands yourself (Google Chrome or Microsoft Edge must be installed):
 
 ```
-python engine/tools/book_tools.py pdf  books/<book>/data.md book.pdf                         (screen, home printer)
-python engine/tools/book_tools.py pdf  books/<book>/data.md book-print.pdf --bleed --cmyk     (print shop, print-on-demand)
-python engine/tools/book_tools.py pdf  books/<book>/data.md book-print.pdf --cover-pdf book-cover.pdf  (the cover in its own file)
-python engine/tools/book_tools.py epub books/<book>/data.md book.epub                        (Apple Books, Kobo, Google Play…)
-python engine/tools/book_tools.py package books/<book>/data.md book.zip book-print.pdf book.epub  (everything in one zip)
-python engine/tools/book_tools.py unpack  book.zip books/<book>                               (a book zip back into a folder)
+python engine/tools/book_tools.py name books/<book>/data.md                                   (<name>: the title in lowercase, no accents)
+python engine/tools/book_tools.py pdf  books/<book>/data.md <name>_chapter3.pdf --chapter 3     (one chapter, to review it)
+python engine/tools/book_tools.py pdf  books/<book>/data.md <name>.pdf                         (screen, home printer)
+python engine/tools/book_tools.py pdf  books/<book>/data.md <name>_print.pdf --bleed --cmyk     (print shop, print-on-demand)
+python engine/tools/book_tools.py pdf  books/<book>/data.md <name>_print.pdf --cover-pdf <name>_cover.pdf  (the cover in its own file)
+python engine/tools/book_tools.py epub books/<book>/data.md <name>.epub                        (Apple Books, Kobo, Google Play…)
+python engine/tools/book_tools.py package books/<book>/data.md <name>.zip <name>_print.pdf <name>.epub  (everything in one zip)
+python engine/tools/book_tools.py unpack  <name>.zip books/<book>                               (a book zip back into a folder)
 ```
 
 `--cmyk` makes a PDF/X-4 in CMYK and needs [Ghostscript](https://ghostscript.com/releases/gsdnld.html); add

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BOOK TOOLS - version 2.3
+BOOK TOOLS - version 2.4
 
 Single tool for an AI agent (or a person) to work on a book's data.md without
 reading the whole file, to check the book's layout.html and style.css, and to export the book as PDF or EPUB.
@@ -14,6 +14,7 @@ Usage:
   python book_tools.py replace       data.md 12.4 new.md     (replace one page)
   python book_tools.py append        data.md new.md          (add chapter(s) at the end)
   python book_tools.py images        data.md                 (images with name, size and prompt)
+  python book_tools.py name          data.md                 (the base name of the files delivered for the book)
   python book_tools.py fix           data.md                 (wrapper lines, encoding, line breaks)
   python book_tools.py fix           layout.html             (same, for the layout file)
   python book_tools.py pdf-to-images file.pdf output_folder
@@ -23,14 +24,15 @@ Usage:
                                      (old CSS variable / theme names -> new ones)
   python book_tools.py pdf           data.md out.pdf [--format SIZE] [--theme NAME] [--bleed]
                                      [--cmyk [--icc profile.icc] [--condition NAME] [--pdfx 4|3]]
-                                     [--cover-pdf cover.pdf] [--force] [--open]
+                                     [--cover-pdf cover.pdf] [--chapter N] [--force] [--open]
                                      (RGB PDF for screens; --cmyk: PDF/X for print shops;
-                                     --cover-pdf: the cover page in its own file, out of the book's PDF)
+                                     --cover-pdf: the cover page in its own file, out of the book's PDF;
+                                     --chapter: only chapter N, a preview for the author)
   python book_tools.py epub          data.md out.epub [--format SIZE] [--theme NAME] [--force] [--open]
                                      (fixed-layout EPUB 3 for e-book stores)
   python book_tools.py package       data.md out.zip [exported.pdf ...]
                                      (the book's files + the exported files, in one zip)
-  python book_tools.py unpack        book.zip folder
+  python book_tools.py unpack        <name>.zip folder
                                      (a book zip the author attached -> folder, to change the book)
 
 pdf and epub lay the book out with the viewer in a headless Chrome or Edge (BOOK_BROWSER
@@ -46,7 +48,7 @@ import shutil
 import sys
 import unicodedata
 
-VERSION = "2.3"
+VERSION = "2.4"
 TOOL = "python book_tools.py"
 
 # ---------------------------------------------------------------- wrapper lines
@@ -1525,14 +1527,45 @@ def add_trim_boxes(src, dst, bleed_mm):
     return True
 
 
+def book_title(path):
+    """The title: line of data.md's header ("" when there is none)."""
+    text, _ = read_file(path)
+    body, _, _ = split_wrapper(text)
+    m = re.match(r"\s*---\n([\s\S]*?)\n---", body)
+    for line in (m.group(1).split("\n") if m else []):
+        k, _, v = line.partition(":")
+        if norm(k) in ("title", "livro"):
+            return v.strip().strip("\"'").strip()
+    return ""
+
+
+def file_name(title):
+    """The base name of every file delivered for a book: the title without accents, lowercase, words joined by
+    "-" ("_" is kept for the suffixes: _sample, _chapter3, _cover, _print). "book" when the title gives nothing."""
+    s = unicodedata.normalize("NFKD", title)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+    s = re.sub(r"[\W_]+", "-", s).strip("-")
+    if len(s) > 60:
+        s = s[:60].rsplit("-", 1)[0] if "-" in s[:60] else s[:60]
+    return s or "book"
+
+
+def cmd_name(path):
+    print(file_name(book_title(path)))
+    return 0
+
+
 def pdf_page_count(path):
     with open(path, "rb") as f:
         return len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", f.read()))
 
 
 def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=None, condition=None, pdfx="4",
-            cover_pdf=None, force=False, show=False):
+            cover_pdf=None, chapter=None, force=False, show=False):
     import tempfile
+    if chapter is not None and (bleed or cmyk or cover_pdf):
+        print("--chapter makes a preview of one chapter: it goes without --bleed, --cmyk and --cover-pdf")
+        return 1
     if pdfx not in PDFX_VERSIONS:
         print(f"--pdfx must be one of: {', '.join(PDFX_VERSIONS)}")
         return 1
@@ -1572,6 +1605,12 @@ def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=Non
             return 1
         # with --cover-pdf the book is printed twice: every page but the cover, then the cover alone
         parts = [(out, None, rep["pages"])]
+        if chapter is not None:
+            count = rep.get("chapters", {}).get(str(chapter).strip())
+            if not count:
+                print(f'Not exported: the book has no chapter "{chapter}" (chapters: {", ".join(rep.get("chapters", {})) or "none"}).')
+                return 1
+            parts = [(out, "chapter:" + str(chapter).strip(), count)]
         if cover_pdf:
             if rep["cover"] is None:
                 print('Not exported: the book has no cover page ("cover: none"), so there is nothing for --cover-pdf.')
@@ -1607,9 +1646,9 @@ def cmd_pdf(path, out, format=None, theme=None, bleed=False, cmyk=False, icc=Non
         print("  RGB print file: fine for Amazon KDP; a print shop or IngramSpark asks for --cmyk (CMYK PDF/X).")
     if cover_pdf:
         print(f"Cover PDF: {parts[1][0]}\n  the front cover page alone, same size and colour")
-    elif rep["cover"] is not None:
+    elif rep["cover"] is not None and chapter is None:
         print("  The cover is the book's page " + str(rep["cover"] + 1) + ". Stores that take the cover separately "
-              "(KDP, IngramSpark…) need --cover-pdf book-cover.pdf.")
+              f"(KDP, IngramSpark…) need --cover-pdf {file_name(rep['title'])}_cover.pdf.")
     if show:
         show_file(out)
         if cover_pdf:
@@ -1839,7 +1878,7 @@ def cmd_unpack(zip_path, folder):
     return 0
 
 
-VALUE_OPTS = ("out", "language", "format", "theme", "icc", "condition", "pdfx", "cover-pdf")
+VALUE_OPTS = ("out", "language", "format", "theme", "icc", "condition", "pdfx", "cover-pdf", "chapter")
 FLAG_OPTS = {"bleed": "bleed", "cmyk": "cmyk", "force": "force", "open": "show"}   # --flag: keyword
 
 
@@ -1869,9 +1908,9 @@ def main(argv):
     cmds = {   # name: (function, number of positional arguments (None: 2 or more), accepted options)
         "validate": (cmd_validate, 1, ()), "fix": (cmd_fix, 1, ()), "list": (cmd_list, 1, ()),
         "show": (cmd_show, 2, ()), "replace": (cmd_replace, 3, ()), "append": (cmd_append, 2, ()),
-        "images": (cmd_images, 1, ()), "pdf-to-images": (cmd_pdf_to_images, 2, ()),
+        "images": (cmd_images, 1, ()), "name": (cmd_name, 1, ()), "pdf-to-images": (cmd_pdf_to_images, 2, ()),
         "migrate": (cmd_migrate, 1, ("out", "language")), "migrate-css": (cmd_migrate_css, 1, ("out",)),
-        "pdf": (cmd_pdf, 2, export + ("bleed", "cmyk", "icc", "condition", "pdfx", "cover_pdf")),
+        "pdf": (cmd_pdf, 2, export + ("bleed", "cmyk", "icc", "condition", "pdfx", "cover_pdf", "chapter")),
         "epub": (cmd_epub, 2, export), "package": (cmd_package, None, ()), "unpack": (cmd_unpack, 2, ()),
     }
     if c not in cmds:

@@ -7,7 +7,7 @@ engine/
   viewer/viewer.js            viewer: data.md parser, template filling, text fitting, search, navigation, printing, EN/PT interface
   viewer/viewer.css           viewer and page styles (dark/light themes)
   tools/book_tools.py         CLI for agents: validate, list, show, replace, append, images, fix,
-                              pdf-to-images, migrate, migrate-css; export: pdf, epub, package
+                              name, pdf-to-images, migrate, migrate-css; export: pdf, epub, package
   templates/new-book/         skeleton of a new book (index.html + data.md + layout.html + style.css + images/)
 ```
 
@@ -106,6 +106,8 @@ on errors.
 
 - PDF: a second run with `--print-to-pdf` (the viewer's `@page` size and print CSS). With `--cover-pdf` it runs
   twice, with `part=interior` and `part=cover`: the viewer hides the other pages (`.page.skip`) before printing.
+  `--chapter N` runs it once with `part=chapter:N`: only that chapter's pages print (the report's `chapters` gives
+  the page count of each chapter number, to check the result). `name` gives the base of the delivered file names.
   The cover page is the one `cover:` names (default: the first page); it takes no page number (`renderPage`). `--cmyk` passes it through
   Ghostscript: PDF/X-4 (or 3) in CMYK with an output intent (`--icc`, or Ghostscript's `default_cmyk.icc`), links
   dropped (PDF/X forbids annotations), TrimBox/BleedBox set page by page by an `EndPage` procedure (Ghostscript

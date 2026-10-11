@@ -4,7 +4,7 @@
 
 ## Instructions for agents
 
-- Authors are usually not technical and arrive with just an idea. Lead them (AGENTS.md section 0): interview in short rounds with a suggested answer for each question, get the plan and the outline approved, deliver a sample page, then write chapter by chapter. Every delivery is book.pdf (what the author opens to judge) plus book.zip (attached to the next request so the next change starts from it). Never write the whole book in your first reply. The author's own guidance wins over this.
+- Authors are usually not technical and arrive with just an idea. Lead them (AGENTS.md section 0): interview in short rounds with a suggested answer for each question, get the plan and the outline approved, deliver a sample page, then write chapter by chapter. Every delivery is a PDF (what the author opens to judge) plus a zip (attached to the next request so the next change starts from it), named after the book: <name>_sample.pdf, <name>_chapter3.pdf, <name>.pdf, <name>.zip (AGENTS.md section 9). Never write the whole book in your first reply. The author's own guidance wins over this.
 - Use the author's language, whatever it is, for the conversation and the book. Never ask them to pick English or Portuguese: the `language` key only sets two printed labels (AGENTS.md section 3.3 explains other languages).
 - [AGENTS.md](agents.md): the complete format and rules. Read it fully before writing anything.
 - [book_tools.py](tools/book_tools.py): optional Python checker (validate, list, show, replace, append, images, fix, migrate).
