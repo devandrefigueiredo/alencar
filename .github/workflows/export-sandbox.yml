@@ -1,0 +1,26 @@
+name: Export in a chat-like sandbox
+
+# Runs the PDF export the way a chat agent's sandbox does: Linux container, root user, Debian's Chromium,
+# the default 64 MB /dev/shm, two CPUs.
+on:
+  workflow_dispatch:
+  push:
+    branches: [export-sandbox-test]
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.11-bookworm
+      options: --cpus 2 --shm-size 64m
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Chromium
+        run: apt-get update -qq && apt-get install -y -qq chromium fonts-dejavu-core > /dev/null && chromium --version
+      - name: Export the reference book
+        run: |
+          set -x
+          python engine/tools/book_tools.py name books/the-art-of-lorem-ipsum-en/data.md
+          time timeout 900 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md out/ref.pdf || true
+          time timeout 900 python -u engine/tools/book_tools.py pdf books/the-art-of-lorem-ipsum-en/data.md out/ch1.pdf --chapter 1 || true
+          ls -la out || true
