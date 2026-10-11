@@ -47,7 +47,7 @@ built, not a passing failure, and the repository being public does not change it
 | Ask for the kit, once | In one short message, give the author the link and the steps: "Open https://github.com/devandrefigueiredo/alencar/archive/refs/heads/main.zip in your browser; it downloads `alencar-main.zip`. Attach that file here, without unzipping it." (Same thing by hand: the repository page, green **Code** button, **Download ZIP**.) It is the whole repository, always current, so every command in this file works after you unzip it. If the author said to stop when the files cannot be obtained, this message is that stop; also offer to go on without the kit (the "No Python" path in section 6). Otherwise keep working while you wait (rule 16). |
 | Ask for known photos in the same message | The sandbox cannot download images either. Photos the author already named (links in their request) go in that same message: one line per photo, the link to download and the file name to attach it as. Photos you choose later (option B, section 5) go in the missing-image list when the text is done ("When you cannot get an image", section 5), never one at a time. Never deliver a photo you did not actually get. |
 | Treat the attached zip as the received kit | Unzip it (e.g. into `/mnt/data/alencar/`) and work there exactly as a coding agent would (section 6). |
-| Say what you could not run | `pdf` and `epub` need a browser inside the sandbox (Task H). If there is none, say so in the final reply. |
+| Say what you could not run | `pdf` and `epub` need a browser inside the sandbox (Task H); run them in the background (section 6). If there is none, or the export does not finish, say so in the final reply. |
 
 ### Match the reference
 
@@ -666,7 +666,23 @@ Usage: `python book_tools.py <command> data.md [args]`. Page refs look like `1.4
 `pdf` and `epub` need Google Chrome, Chromium or Microsoft Edge on the machine (set `BOOK_BROWSER` to the program
 file if the tool does not find it). `pdf --cmyk` also needs Ghostscript (`BOOK_GS`). Both refuse a book that
 `validate` rejects or where the viewer finds errors (overflowing text, broken layout); `--force` exports anyway, only
-when the author asks for a draft.
+when the author asks for a draft. Each browser run may take `BOOK_BROWSER_TIMEOUT` seconds (300 by default).
+
+**In a chat sandbox, run `pdf` and `epub` in the background.** Many sandboxes cut any command after a minute or two,
+and laying a book out there can take longer; the cut looks like "timeout" or a hung cell, not like an error of the
+tool. Start the export detached, then check on it in your next steps:
+
+```python
+import subprocess, os
+log = open("/mnt/data/export.log", "w")
+job = subprocess.Popen(["python", "/mnt/data/alencar/engine/tools/book_tools.py", "pdf", "/mnt/data/book/data.md",
+                        "/mnt/data/the-night-sky_chapter3.pdf", "--chapter", "3"],
+                       stdout=log, stderr=subprocess.STDOUT, env=dict(os.environ, BOOK_BROWSER_TIMEOUT="900"))
+```
+
+`job.poll()` is `None` while it runs; read `export.log` for progress ("Laying the book out…", "Printing…") and the
+result. If the log says the browser did not finish, or the sandbox resets before it ends, say so in the reply with
+the last lines of the log, deliver the zip, and go on (rule 16). Never make the PDF another way.
 
 A new book starts from the template: `engine/templates/new-book/` in
 the repository (`data.md`, `layout.html`, `style.css`, `images/`).
