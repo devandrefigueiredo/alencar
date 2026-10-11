@@ -58,7 +58,8 @@ The toolbar at the top:
 1. Tell your AI: "Read <site>/agents.md and help me write a book about …". The site's home page is written for the
    AI: it explains the format and points to the reference book the AI must follow. If your AI cannot open links, attach `agent/AGENTS.md` (and, if it can run Python,
    `engine/tools/book_tools.py`). Some AIs (ChatGPT, for one) can read the web but cannot download into the place
-   where they run code; for them, attach the site's `/downloads/kit.zip` (this whole folder in one zip) from the start.
+   where they run code; for them, download https://github.com/devandrefigueiredo/alencar/archive/refs/heads/main.zip
+   (this whole folder in one zip) and attach it from the start.
    Starting from just an idea is fine: the AI interviews you in short rounds (each question comes with a suggestion;
    reply "ok" to accept), shows you the plan and the chapter list, delivers a sample page, then writes chapter by
    chapter. The plan is saved inside `data.md` (as a hidden comment), so another chat or AI can continue later.
